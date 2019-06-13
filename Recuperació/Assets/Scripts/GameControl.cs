@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using TMPro;
 
 public class GameControl : MonoBehaviour {
 
@@ -16,6 +17,8 @@ public class GameControl : MonoBehaviour {
     public bool[] levels;
     
     public static GameControl control;
+
+    public int score;
 
     // Use this for initialization
     void Awake () {
@@ -69,7 +72,9 @@ public class GameControl : MonoBehaviour {
             Cursor.visible = true;
             gamePaused = true;
         }
-	}
+
+        if (GameObject.Find("ScoreNumber") != null) GameObject.Find("ScoreNumber").GetComponent<TextMeshProUGUI>().text = score.ToString();
+    }
 
     public void saveData()
     {
