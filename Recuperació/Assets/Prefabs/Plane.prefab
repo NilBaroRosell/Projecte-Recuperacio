@@ -21,12 +21,29 @@ GameObject:
   - component: {fileID: 4417718346192128}
   - component: {fileID: 33829861962753972}
   - component: {fileID: 23687459219027894}
-  - component: {fileID: 95362307293763538}
-  - component: {fileID: 143874111874597534}
-  - component: {fileID: 136188506702056822}
   - component: {fileID: 114385359807189064}
+  - component: {fileID: 54815866578261716}
+  - component: {fileID: 65246647718195740}
   m_Layer: 0
   m_Name: Plane
+  m_TagString: Player
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!1 &1535825236740732
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4228056577112936}
+  - component: {fileID: 20205673539577620}
+  - component: {fileID: 81118945366804874}
+  - component: {fileID: 114269560524952076}
+  m_Layer: 0
+  m_Name: Camera
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -79,6 +96,19 @@ Transform:
   m_Father: {fileID: 4417718346192128}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &4228056577112936
+Transform:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1535825236740732}
+  m_LocalRotation: {x: 0.7635594, y: -0, z: -0, w: 0.6457376}
+  m_LocalPosition: {x: 0, y: 15.000002, z: 7.999996}
+  m_LocalScale: {x: 0.037, y: 0.03499998, z: 0.03499998}
+  m_Children: []
+  m_Father: {fileID: 4417718346192128}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 20, y: 0, z: 0}
 --- !u!4 &4378838983386206
 Transform:
   m_ObjectHideFlags: 1
@@ -104,9 +134,50 @@ Transform:
   m_Children:
   - {fileID: 4378838983386206}
   - {fileID: 4029220275754514}
+  - {fileID: 4228056577112936}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: -90.00001, y: -90, z: 90}
+--- !u!20 &20205673539577620
+Camera:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1535825236740732}
+  m_Enabled: 1
+  serializedVersion: 2
+  m_ClearFlags: 1
+  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_projectionMatrixMode: 1
+  m_SensorSize: {x: 36, y: 24}
+  m_LensShift: {x: 0, y: 0}
+  m_FocalLength: 50
+  m_NormalizedViewPortRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 1
+    height: 1
+  near clip plane: 0.3
+  far clip plane: 1000
+  field of view: 60
+  orthographic: 0
+  orthographic size: 5
+  m_Depth: 0
+  m_CullingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_RenderingPath: -1
+  m_TargetTexture: {fileID: 0}
+  m_TargetDisplay: 0
+  m_TargetEye: 3
+  m_HDR: 1
+  m_AllowMSAA: 1
+  m_AllowDynamicResolution: 0
+  m_ForceIntoRT: 0
+  m_OcclusionCulling: 1
+  m_StereoConvergence: 10
+  m_StereoSeparation: 0.022
 --- !u!23 &23384721232751528
 MeshRenderer:
   m_ObjectHideFlags: 1
@@ -233,24 +304,52 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1406023587495074}
   m_Mesh: {fileID: 4300000, guid: 39e3c7ce73bc03d4380ae117e979251c, type: 3}
---- !u!95 &95362307293763538
-Animator:
-  serializedVersion: 3
+--- !u!54 &54815866578261716
+Rigidbody:
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1406023587495074}
+  serializedVersion: 2
+  m_Mass: 0.002
+  m_Drag: 0
+  m_AngularDrag: 0
+  m_UseGravity: 0
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 126
+  m_CollisionDetection: 0
+--- !u!65 &65246647718195740
+BoxCollider:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1406023587495074}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
   m_Enabled: 1
-  m_Avatar: {fileID: 9000000, guid: 39e3c7ce73bc03d4380ae117e979251c, type: 3}
-  m_Controller: {fileID: 0}
-  m_CullingMode: 1
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 1
-  m_LinearVelocityBlending: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
+  serializedVersion: 2
+  m_Size: {x: 9.154025, y: 5.575207, z: 3.8792443}
+  m_Center: {x: -0.0008916855, y: 1.4597214, z: 0.07636457}
+--- !u!81 &81118945366804874
+AudioListener:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1535825236740732}
+  m_Enabled: 1
+--- !u!114 &114269560524952076
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1535825236740732}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d33602f09fd50a2499c8bf5dad418a80, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  player: {fileID: 1406023587495074}
 --- !u!114 &114385359807189064
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -262,39 +361,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1fb8313767c1cdd439b898d152c03882, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  boostAmount: 0
+  boostLost: 0
+  targetMultiplier: 0
   mainCamera: {fileID: 0}
-  planeReference: {fileID: 0}
   prop: {fileID: 1784549680497660}
   propBlured: {fileID: 1747037910002096}
-  moveHorizontal: 0
-  moveVertical: 0
---- !u!136 &136188506702056822
-CapsuleCollider:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1406023587495074}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  m_Radius: 3.2593808
-  m_Height: 6.5187626
-  m_Direction: 2
-  m_Center: {x: -0.0008916855, y: 1.1238189, z: 0.39783144}
---- !u!143 &143874111874597534
-CharacterController:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1406023587495074}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 0
-  serializedVersion: 2
-  m_Height: 6.518763
-  m_Radius: 3.259381
-  m_SlopeLimit: 45
-  m_StepOffset: 0.3
-  m_SkinWidth: 0.08
-  m_MinMoveDistance: 0.001
-  m_Center: {x: -0.0008916855, y: 1.123819, z: 0.3978314}
+  loopAvailable: {fileID: 0}
+  back: 0
+  front: 0
+  left: 0
+  right: 0
+  actualRotation: {x: 0, y: 0, z: 0}
+  initialRotation: {x: 0, y: 0, z: 0}
+  avoidObstacle: 0
+  onPoint: 0

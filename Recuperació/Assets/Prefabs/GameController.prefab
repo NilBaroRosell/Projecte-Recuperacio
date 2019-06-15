@@ -60,3 +60,8 @@ MonoBehaviour:
   continueAvailable: 0
   gamePaused: 0
   levels: 
+  score: 0
+  penaltyTime: 0
+  startTimer: 0
+  stopTimer: 0
+  finalTimer: 

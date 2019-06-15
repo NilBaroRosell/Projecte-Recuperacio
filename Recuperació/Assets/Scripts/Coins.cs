@@ -6,6 +6,11 @@ public class Coins : MonoBehaviour {
 
     public int coinsToAdd;
 
+    private void Update()
+    {
+        gameObject.transform.Rotate(0.0f, 0.0f, 1.5f);
+    }
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))

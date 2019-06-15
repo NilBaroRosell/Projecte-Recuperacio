@@ -310,15 +310,21 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\CameraControl.cs" />
+    <Compile Include="Assets\Scripts\checkpoints.cs" />
     <Compile Include="Assets\Scripts\Coins.cs" />
     <Compile Include="Assets\Scripts\ControlDelete.cs" />
+    <Compile Include="Assets\Scripts\Controllers.cs" />
     <Compile Include="Assets\Scripts\ExtraBoost.cs" />
     <Compile Include="Assets\Scripts\GameControl.cs" />
+    <Compile Include="Assets\Scripts\HUDControler.cs" />
     <Compile Include="Assets\Scripts\LevelFinished.cs" />
     <Compile Include="Assets\Scripts\MenuControl.cs" />
+    <Compile Include="Assets\Scripts\Obstacles.cs" />
     <Compile Include="Assets\Scripts\PlayerController.cs" />
     <Compile Include="Assets\Scripts\PlayerData.cs" />
     <Compile Include="Assets\Scripts\SaveSystem.cs" />
+    <Compile Include="Assets\Scripts\StartAndFinish.cs" />
+    <Compile Include="Assets\Scripts\Target.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\TextMesh Pro\Resources\LineBreaking Following Characters.txt" />

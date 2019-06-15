@@ -1,17 +1,21 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour {
 
-    private float speed = 1f;
+    public float speed = 2f;
     private float boostMultiplier = 2f;
     private float movementMultiplier = 0.5f;
+    private float trickMultiplier = 0.2f;
     public float boostAmount, boostLost;
+    public int targetMultiplier;
 
     public Camera mainCamera;
     public GameObject prop;
     public GameObject propBlured;
+    public GameObject loopAvailable;
 
     private Vector3 moveDirection = Vector3.zero;
 
@@ -21,78 +25,143 @@ public class PlayerController : MonoBehaviour {
     public bool back, front, left, right;
 
     private int rotation;
+    public Vector3 actualRotation, initialRotation;
+
+    public int avoidObstacle;
+    private int spin, flip;
+
+    public bool onPoint;
+    private float decreaseAmount = 0.0033f;
 
     void Start()
     {
         boostAmount = 100;
+        GameObject.Find("BoostBar").GetComponent<Image>().fillAmount = boostAmount;
         boostLost = 0.5f;
         back = false;
         front = false;
         left = false;
         right = false;
         rotation = 0;
+        actualRotation = new Vector3(gameObject.transform.rotation.x, gameObject.transform.rotation.y, gameObject.transform.rotation.z);
+        initialRotation = new Vector3(gameObject.transform.rotation.x, gameObject.transform.rotation.y, gameObject.transform.rotation.z);
+        onPoint = true;
+        if (GameObject.Find("LoopAvailable") != null) loopAvailable = GameObject.Find("LoopAvailable");
+        targetMultiplier = 1;
+        avoidObstacle = 5;
+        spin = 20;
+        flip = 30;
     }
 
     void Update()
     {
-        if(!GameControl.control.gamePaused) Move();
+        checkTarget();
+        actualRotation = new Vector3(gameObject.transform.rotation.x, gameObject.transform.rotation.y, gameObject.transform.rotation.z);
+        if (Mathf.Abs(actualRotation.x) - Mathf.Abs(initialRotation.x) < 0.0001 && Mathf.Abs(actualRotation.x) - Mathf.Abs(initialRotation.x) > -0.0001) onPoint = true;
+        else onPoint = false;
+        if (!GameControl.control.gamePaused) Move();
+        if(GameControl.control.boostActivated)
+        {
+            if (GameObject.Find("BoostBar") != null)
+            {
+                GameObject.Find("BoostBar").GetComponent<Image>().fillAmount = boostAmount / 100;
+                if (GameObject.Find("BoostBar").GetComponent<Image>().fillAmount < 0.02f) GameObject.Find("BoostBar").GetComponent<Image>().fillAmount = 0.02f;
+            }
+        }
+        if(GameControl.control.onPointActivated)
+        {
+            if (onPoint) loopAvailable.SetActive(true);
+            else loopAvailable.SetActive(false);
+        }
     }
 
     void Move()
     {
-        if (back) Backflip();
-        else if (front) Frontflip();
-        else if (left) LeftSpin();
-        else if (right) RightSpin();
-        else if (Input.GetButtonDown("Backflip"))
+        if(GameControl.control.movementActivated)
         {
-            back = true;
-            Backflip();
-        }
-        else if (Input.GetButtonDown("Frontflip"))
-        {
-            front = true;
-            Frontflip();
-        }
-        else if (Input.GetButtonDown("LeftSpin"))
-        {
-            left = true;
-            LeftSpin();
-        }
-        else if (Input.GetButtonDown("RightSpin"))
-        {
-            right = true;
-            RightSpin();
+            if(GameControl.control.tricksActivated)
+            {
+                if (back) Backflip();
+                else if (front) Frontflip();
+                else if (left) LeftSpin();
+                else if (right) RightSpin();
+                else if (Input.GetButtonDown("Backflip") && onPoint)
+                {
+                    back = true;
+                    Backflip();
+                }
+                else if (Input.GetButtonDown("Frontflip") && onPoint)
+                {
+                    front = true;
+                    Frontflip();
+                }
+                else if (Input.GetButtonDown("LeftSpin"))
+                {
+                    left = true;
+                    LeftSpin();
+                }
+                else if (Input.GetButtonDown("RightSpin"))
+                {
+                    right = true;
+                    RightSpin();
+                }
+                else
+                {
+                    moveDirection = new Vector3(Input.GetAxis("Horizontal") * movementMultiplier, Input.GetAxis("Vertical") * movementMultiplier, speed);
+
+                    if (Input.GetButton("Space") && boostAmount > 0)
+                    {
+                        moveDirection = new Vector3(moveDirection.x, moveDirection.y, moveDirection.z * boostMultiplier);
+                        boostAmount -= boostLost;
+                    }
+
+                    gameObject.transform.position += moveDirection;
+
+                    if (gameObject.transform.position.y > 17.5) gameObject.transform.position = new Vector3(gameObject.transform.position.x, 17.5f, gameObject.transform.position.z);
+                    if (gameObject.transform.position.y < 9) gameObject.transform.position = new Vector3(gameObject.transform.position.x, 9f, gameObject.transform.position.z);
+                    if (gameObject.transform.position.x > 30) gameObject.transform.position = new Vector3(30.0f, gameObject.transform.position.y, gameObject.transform.position.z);
+                    if (gameObject.transform.position.x < -10) gameObject.transform.position = new Vector3(-10.0f, gameObject.transform.position.y, gameObject.transform.position.z);
+
+                    gameObject.transform.Rotate(0.0f, 2 * Input.GetAxis("Horizontal"), 0.0f);
+                }
+            }
+            else
+            {
+                moveDirection = new Vector3(Input.GetAxis("Horizontal") * movementMultiplier, Input.GetAxis("Vertical") * movementMultiplier, speed);
+
+                if (GameControl.control.boostActivated)
+                {
+                    if (Input.GetButton("Space") && boostAmount > 0)
+                    {
+                        moveDirection = new Vector3(moveDirection.x, moveDirection.y, moveDirection.z * boostMultiplier);
+                        boostAmount -= boostLost;
+                    }
+                }
+
+                gameObject.transform.position += moveDirection;
+
+                if (gameObject.transform.position.y > 17.5) gameObject.transform.position = new Vector3(gameObject.transform.position.x, 17.5f, gameObject.transform.position.z);
+                if (gameObject.transform.position.y < 9) gameObject.transform.position = new Vector3(gameObject.transform.position.x, 9f, gameObject.transform.position.z);
+                if (gameObject.transform.position.x > 30) gameObject.transform.position = new Vector3(30.0f, gameObject.transform.position.y, gameObject.transform.position.z);
+                if (gameObject.transform.position.x < -10) gameObject.transform.position = new Vector3(-10.0f, gameObject.transform.position.y, gameObject.transform.position.z);
+
+                gameObject.transform.Rotate(0.0f, 2 * Input.GetAxis("Horizontal"), 0.0f);
+            }
         }
         else
         {
-            moveDirection = new Vector3(Input.GetAxis("Horizontal") * movementMultiplier, Input.GetAxis("Vertical") * movementMultiplier, speed);
-
-            if (Input.GetButton("Space") && boostAmount > 0)
-            {
-                moveDirection = new Vector3(moveDirection.x, moveDirection.y, moveDirection.z * boostMultiplier);
-                boostAmount -= boostLost;
-            }
-
+            moveDirection = new Vector3(0.0f, 0.0f, speed);
             gameObject.transform.position += moveDirection;
-
-            if (gameObject.transform.position.y > 20.5) gameObject.transform.position = new Vector3(gameObject.transform.position.x, 20.5f, gameObject.transform.position.z);
-            if (gameObject.transform.position.y < 8.5) gameObject.transform.position = new Vector3(gameObject.transform.position.x, 8.5f, gameObject.transform.position.z);
-            if (gameObject.transform.position.x > 30) gameObject.transform.position = new Vector3(30.0f, gameObject.transform.position.y, gameObject.transform.position.z);
-            if (gameObject.transform.position.x < -10) gameObject.transform.position = new Vector3(-10.0f, gameObject.transform.position.y, gameObject.transform.position.z);
-
-            gameObject.transform.Rotate(0.0f, 2 * Input.GetAxis("Horizontal"), 0.0f);
         }
-
+        
         prop.SetActive(false);
         propBlured.SetActive(true);
         propBlured.transform.Rotate(1000 * Time.deltaTime, 0, 0);
-
     }
 
     void Backflip()
     {
-        moveDirection = new Vector3(0.0f, 5 * movementMultiplier, speed);
+        moveDirection = new Vector3(0.0f, 5 * movementMultiplier, speed * trickMultiplier);
         gameObject.transform.position += moveDirection;
         if (rotation > -360)
         {
@@ -101,6 +170,7 @@ public class PlayerController : MonoBehaviour {
         }
         else
         {
+            GameControl.control.score += flip * targetMultiplier;
             rotation = 0;
             back = false;
         }
@@ -108,7 +178,7 @@ public class PlayerController : MonoBehaviour {
 
     void Frontflip()
     {
-        moveDirection = new Vector3(0.0f, -5 * movementMultiplier, speed);
+        moveDirection = new Vector3(0.0f, -5 * movementMultiplier, speed * trickMultiplier);
         gameObject.transform.position += moveDirection;
         if (rotation < 360)
         {
@@ -117,6 +187,7 @@ public class PlayerController : MonoBehaviour {
         }
         else
         {
+            GameControl.control.score += flip * targetMultiplier;
             rotation = 0;
             front = false;
         }
@@ -124,7 +195,7 @@ public class PlayerController : MonoBehaviour {
 
     void LeftSpin()
     {
-        moveDirection = new Vector3(-2 * movementMultiplier, 0.0f, speed);
+        moveDirection = new Vector3(-movementMultiplier, 0.0f, speed * trickMultiplier);
         gameObject.transform.position += moveDirection;
         if (rotation > -360)
         {
@@ -133,6 +204,7 @@ public class PlayerController : MonoBehaviour {
         }
         else
         {
+            GameControl.control.score += spin * targetMultiplier;
             rotation = 0;
             left = false;
         }
@@ -140,7 +212,7 @@ public class PlayerController : MonoBehaviour {
 
     void RightSpin()
     {
-        moveDirection = new Vector3(2 * movementMultiplier, 0.0f, speed);
+        moveDirection = new Vector3(movementMultiplier, 0.0f, speed * trickMultiplier);
         gameObject.transform.position += moveDirection;
         if (rotation < 360)
         {
@@ -149,8 +221,27 @@ public class PlayerController : MonoBehaviour {
         }
         else
         {
+            GameControl.control.score += spin * targetMultiplier;
             rotation = 0;
             right = false;
         }
+    }
+
+
+    public void checkTarget()
+    {
+        if (targetMultiplier != 1)
+        {
+            StartCoroutine(MultiplierTimeLeft(5.0f));
+        }
+    }
+
+    public IEnumerator MultiplierTimeLeft(float time)
+    {
+        GameObject.Find("CanvasInGame").GetComponent<HUDControler>().DecreaseTarget(decreaseAmount);
+        yield return new WaitForSeconds(time);
+
+        GameObject.Find("CanvasInGame").GetComponent<HUDControler>().HideTarget();
+        targetMultiplier = 1;
     }
 }
