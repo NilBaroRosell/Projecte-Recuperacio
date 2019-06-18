@@ -59,9 +59,22 @@ MonoBehaviour:
   resolution: 
   continueAvailable: 0
   gamePaused: 0
+  firstCheck: 0
   levels: 
   score: 0
   penaltyTime: 0
   startTimer: 0
+  finishTimer: 0
   stopTimer: 0
   finalTimer: 
+  nextEvent: 0
+  actualEvent: 0
+  coinsActivated: 0
+  timerActivated: 0
+  penaltyActivated: 0
+  boostActivated: 0
+  messagesActivated: 0
+  targetActivated: 0
+  onPointActivated: 0
+  movementActivated: 0
+  tricksActivated: 0

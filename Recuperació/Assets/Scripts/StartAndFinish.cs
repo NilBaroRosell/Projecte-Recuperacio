@@ -29,7 +29,6 @@ public class StartAndFinish : MonoBehaviour {
             {
                 GameControl.control.stopTimer = true;
                 GameControl.control.nextEvent = true;
-                //GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMessage("Your time is: " + GameControl.control.finalTimer, 30);
             }
         }
     }

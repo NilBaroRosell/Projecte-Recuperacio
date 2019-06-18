@@ -13,6 +13,7 @@ public class HUDControler : MonoBehaviour {
     public GameObject Coins;
     public GameObject Penalty;
     public GameObject OnPoint;
+    public GameObject results;
     public bool movementControl, boostControl, tricksControl;
 
     // Use this for initialization
@@ -36,7 +37,15 @@ public class HUDControler : MonoBehaviour {
 
     public void ShowHUD()
     {
-        for (int i = 0; i < gameObject.transform.childCount; i++)
+        for (int i = 0; i < gameObject.transform.childCount - 1; i++)
+        {
+            gameObject.transform.GetChild(i).gameObject.SetActive(true);
+        }
+    }
+
+    public void ShowHUD2()
+    {
+        for (int i = 4; i < gameObject.transform.childCount - 2; i++)
         {
             gameObject.transform.GetChild(i).gameObject.SetActive(true);
         }
@@ -74,6 +83,8 @@ public class HUDControler : MonoBehaviour {
         if(GameControl.control.messagesActivated)
         {
             Messages.SetActive(true);
+            Messages.GetComponent<Image>().enabled = true;
+            Messages.transform.GetChild(0).GetComponent<TextMeshProUGUI>().enabled = true;
             Messages.transform.GetChild(0).GetComponent<TextMeshProUGUI>().fontSize = size;
             Messages.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = textToShow;
         }
@@ -81,7 +92,8 @@ public class HUDControler : MonoBehaviour {
 
     public void HideMessage()
     {
-        Messages.SetActive(false);
+        Messages.GetComponent<Image>().enabled = false;
+        Messages.transform.GetChild(0).GetComponent<TextMeshProUGUI>().enabled = false;
     }
 
     public void ShowBoost()
@@ -144,6 +156,63 @@ public class HUDControler : MonoBehaviour {
     {
         gameObject.transform.GetChild(2).gameObject.SetActive(false);
         tricksControl = false;
+    }
+
+    public void printRaceResults()
+    {
+        results.SetActive(true);
+
+        if (GameControl.control.playerScore > GameControl.control.alexScore)
+        {
+            results.transform.GetChild(0).GetComponent<TextMeshProUGUI>().fontSize = 30;
+            results.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "1. Robert        5 points\n\n2. Alex            3 points\n\n3. Emily          2 points\n\n4. William       1 point";
+        }
+        else if (GameControl.control.playerScore > GameControl.control.emilyScore)
+        {
+            results.transform.GetChild(0).GetComponent<TextMeshProUGUI>().fontSize = 30;
+            results.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "1. Alex            5 points\n\n2. Robert        3 points\n\n3. Emily          2 points\n\n4. William       1 point";
+        }
+        else if (GameControl.control.playerScore > GameControl.control.williamScore)
+        {
+            results.transform.GetChild(0).GetComponent<TextMeshProUGUI>().fontSize = 30;
+            results.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "1. Alex            5 points\n\n2. Emily          3 points\n\n3. Robert        2 points\n\n4. William       1 point";
+        }
+        else
+        {
+            results.transform.GetChild(0).GetComponent<TextMeshProUGUI>().fontSize = 30;
+            results.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "1. Alex            5 points\n\n2. Emily          3 points\n\n3. William       2 points\n\n4. Robert        1 point";
+        }
+    }
+
+    public void HideResults()
+    {
+        results.SetActive(false);
+    }
+
+    public void printChampionshipResults()
+    {
+        results.SetActive(true);
+
+        if (GameControl.control.playerGlobal > GameControl.control.emilyGlobal)
+        {
+            results.transform.GetChild(0).GetComponent<TextMeshProUGUI>().fontSize = 30;
+            results.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "1. Robert        " + GameControl.control.playerGlobal + " points\n\n2. Emily          " + GameControl.control.emilyGlobal + " points\n\n3. Alex            " + GameControl.control.alexGlobal + " points\n\n4. William       " + GameControl.control.williamGlobal + " points";
+        }
+        else if (GameControl.control.playerGlobal > GameControl.control.alexGlobal)
+        {
+            results.transform.GetChild(0).GetComponent<TextMeshProUGUI>().fontSize = 30;
+            results.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "1. Emily          " + GameControl.control.emilyGlobal + " points\n\n2. Robert        " + GameControl.control.playerGlobal + " points\n\n3. Alex            " + GameControl.control.alexGlobal + " points\n\n4. William       " + GameControl.control.williamGlobal + " points";
+        }
+        else if (GameControl.control.playerGlobal > GameControl.control.williamGlobal)
+        {
+            results.transform.GetChild(0).GetComponent<TextMeshProUGUI>().fontSize = 30;
+            results.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "1. Emily          " + GameControl.control.emilyGlobal + " points\n\n2. Alex            " + GameControl.control.alexGlobal + " points\n\n3. Robert        " + GameControl.control.playerGlobal + " points\n\n4. William       " + GameControl.control.williamGlobal + " points";
+        }
+        else
+        {
+            results.transform.GetChild(0).GetComponent<TextMeshProUGUI>().fontSize = 30;
+            results.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "1. Emily          " + GameControl.control.emilyGlobal + " points\n\n2. Alex            " + GameControl.control.alexGlobal + " points\n\n3. William       " + GameControl.control.williamGlobal + " points\n\n4. Robert        " + GameControl.control.playerGlobal + " points";
+        }
     }
 
     public IEnumerator HideAfterTime(float time)

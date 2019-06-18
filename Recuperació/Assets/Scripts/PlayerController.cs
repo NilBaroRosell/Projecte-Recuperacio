@@ -33,10 +33,10 @@ public class PlayerController : MonoBehaviour {
     public bool onPoint;
     private float decreaseAmount = 0.0033f;
 
-    void Start()
+    public void Start()
     {
         boostAmount = 100;
-        GameObject.Find("BoostBar").GetComponent<Image>().fillAmount = boostAmount;
+        if (GameObject.Find("BoostBar") != null) GameObject.Find("BoostBar").GetComponent<Image>().fillAmount = boostAmount;
         boostLost = 0.5f;
         back = false;
         front = false;

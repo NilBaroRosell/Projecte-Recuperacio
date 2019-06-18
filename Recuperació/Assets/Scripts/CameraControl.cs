@@ -28,8 +28,11 @@ public class CameraControl : MonoBehaviour {
         {
             if (player.GetComponent<PlayerController>().back)
             {
-                gameObject.transform.position = Vector3.Lerp(gameObject.transform.position, new Vector3(player.transform.position.x, initialY, gameObject.transform.position.z), 0.75f * Time.deltaTime);
-                gameObject.transform.LookAt(player.transform.position);
+                //gameObject.transform.position = Vector3.Lerp(gameObject.transform.position, gameObject.transform.position = new Vector3(player.transform.position.x, initialY, player.transform.position.z - 15), 0.75f * Time.deltaTime);
+                //gameObject.transform.position = Vector3.Lerp(gameObject.transform.position, new Vector3(player.transform.position.x, player.transform.position.y, stopPosition.z - 30/*+ player.GetComponent<PlayerController>().speed/2*/), 0.75f * Time.deltaTime);
+                //gameObject.transform.position = Vector3.Lerp(gameObject.transform.position, new Vector3(player.transform.position.x, initialY, stopPosition.z + GameObject.Find("Plane").GetComponent<PlayerController>().speed/2), 0.75f * Time.deltaTime);
+                //stopPosition.z += GameObject.Find("Plane").GetComponent<PlayerController>().speed / 2;
+                //gameObject.transform.LookAt(player.transform.position);
                 //gameObject.transform.eulerAngles = new Vector3(initialRotationX, 0.0f, 0.0f);
             }
             else if (player.GetComponent<PlayerController>().front)

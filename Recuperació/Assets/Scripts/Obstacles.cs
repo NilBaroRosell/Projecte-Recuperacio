@@ -4,27 +4,38 @@ using UnityEngine;
 
 public class Obstacles : MonoBehaviour {
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+    public bool stop = false;
+    // Use this for initialization
+    void Start()
+    {
+
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+
+    }
 
     private void OnCollisionEnter(Collision collision)
     {
-        if(collision.gameObject.tag == "Player")
+        if (collision.gameObject.tag == "Player")
         {
             GameControl.control.penaltyTime += 5;
         }
-        Destroy(gameObject);
+        StartCoroutine(ShowAfterTime(5.0f));
+        if (!stop)
+        {
+            gameObject.transform.position -= new Vector3(0, 0, 30);
+            stop = true;
+        }
     }
 
-    private void OnTriggerEnter(Collider other)
+    public IEnumerator ShowAfterTime(float time)
     {
-        Destroy(gameObject);
+        yield return new WaitForSeconds(time);
+
+        gameObject.transform.position += new Vector3(0, 0, 30);
+        stop = false;
     }
 }

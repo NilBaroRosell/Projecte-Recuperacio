@@ -286,17 +286,18 @@ public class MenuControl : MonoBehaviour {
 
     public void newGame()
     {
-        if (!GameControl.control.continueAvailable) GameControl.control.continueAvailable = true;//GameObject.Find("GameController").GetComponent<GameControl>().continueAvailable = true;
+        if (!GameControl.control.continueAvailable) GameControl.control.continueAvailable = true;
 
         GameControl.control.saveData();
 
-        //fer que vagi al primer nivell
         goToLevelNumber(0);
     }
 
     public void goToLevelNumber(int numLevel)
     {
-        if (numLevel == 3) numLevel = GameControl.control.lastLevelPlayed;
+        if (numLevel == 3) numLevel = GameControl.control.lastLevelPlayed - 1;
+
+        GameControl.control.firstCheck = true;
 
         switch (numLevel)
         {
@@ -394,6 +395,8 @@ public class MenuControl : MonoBehaviour {
 
     public void goMainMenuFromPause()
     {
+        //GameControl.control.firstCheck = true;
+        GameControl.control.lastLevelPlayed = GameControl.control.level;
         GameControl.control.saveData();
         SceneManager.LoadScene("Menus");
     }
@@ -407,10 +410,6 @@ public class MenuControl : MonoBehaviour {
     {
         if (GameControl.control.levels[levelNum])
         {
-            //aixo realment es fa quan s'acabi el nivell
-
-
-            //aixo ja esta be
             switch(levelNum)
             {
                 case 0:

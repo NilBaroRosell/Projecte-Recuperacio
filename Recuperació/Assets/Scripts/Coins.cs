@@ -5,10 +5,11 @@ using UnityEngine;
 public class Coins : MonoBehaviour {
 
     public int coinsToAdd;
+    public bool stop = false;
 
     private void Update()
     {
-        gameObject.transform.Rotate(0.0f, 0.0f, 1.5f);
+        if (!GameControl.control.gamePaused) gameObject.transform.Rotate(0.0f, 0.0f, 1.5f);
     }
 
     private void OnTriggerEnter(Collider other)
@@ -16,7 +17,20 @@ public class Coins : MonoBehaviour {
         if (other.CompareTag("Player"))
         {
             GameControl.control.score += coinsToAdd;
-            Destroy(gameObject);
+            StartCoroutine(ShowAfterTime(5.0f));
+            if (!stop)
+            {
+                gameObject.transform.position -= new Vector3(0, 0, 30);
+                stop = true;
+            }
         }
+    }
+
+    public IEnumerator ShowAfterTime(float time)
+    {
+        yield return new WaitForSeconds(time);
+
+        gameObject.transform.position += new Vector3(0, 0, 30);
+        stop = false;
     }
 }

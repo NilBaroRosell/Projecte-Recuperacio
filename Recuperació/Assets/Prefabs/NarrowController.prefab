@@ -55,6 +55,7 @@ GameObject:
   - component: {fileID: 4085759284153074}
   - component: {fileID: 65003399877546194}
   - component: {fileID: 114866801570673070}
+  - component: {fileID: 65934115695396552}
   m_Layer: 0
   m_Name: NarrowController
   m_TagString: Untagged
@@ -69,7 +70,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1639177619854540}
   m_LocalRotation: {x: -0.7071068, y: -0, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: -1, y: -15, z: 15171}
+  m_LocalPosition: {x: 427, y: 0, z: 404.3}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4664489227071154}
@@ -203,8 +204,20 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 21.038128, y: 15.657459, z: 61.339317}
-  m_Center: {x: 10.940844, y: -0.10171604, z: 29.617931}
+  m_Size: {x: 13.541224, y: 15.657459, z: 61.339317}
+  m_Center: {x: 10.881993, y: -0.10171604, z: 29.617931}
+--- !u!65 &65934115695396552
+BoxCollider:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1639177619854540}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 155.28777, y: 3.5563936, z: 69.75871}
+  m_Center: {x: 5.6774063, y: -9.682726, z: 34.379364}
 --- !u!114 &114866801570673070
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -218,3 +231,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   narrowZone: 1
   first: 0
+  stop: 0
