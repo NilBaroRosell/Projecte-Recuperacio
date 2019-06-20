@@ -90,24 +90,25 @@ public class TerrainController : MonoBehaviour
                         StartPoint.SetActive(false);
                         break;
                     case 3:
-                    case 4:
-                    case 5:
-                    case 6:
-                    case 7:
-                    case 8:
                         AddNew();
                         break;
-                    case 9:
+                    case 4:
+                        AddNew();
+                        break;
+                    case 5:
+                        AddNew();
+                        break;
+                    case 6:
                         FinishPoint.SetActive(true);
                         FinishPoint.transform.position = Last.transform.position + new Vector3(0.0f, 0.0f, 999.11f);
                         Last = FinishPoint;
                         break;
-                    case 10:
+                    case 7:
                         ExtraTerrain2.SetActive(true);
                         ExtraTerrain2.transform.position = Last.transform.position + new Vector3(0.0f, 0.0f, 999.11f);
                         Last = ExtraTerrain2;
                         break;
-                    case 11:
+                    case 8:
                         ExtraTerrain3.SetActive(true);
                         ExtraTerrain3.transform.position = Last.transform.position + new Vector3(0.0f, 0.0f, 999.11f);
                         Last = ExtraTerrain3;

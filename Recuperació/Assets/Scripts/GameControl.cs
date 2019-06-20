@@ -38,6 +38,8 @@ public class GameControl : MonoBehaviour {
     private string alexTime, emilyTime, williamTime;
     public int playerScore, alexScore, emilyScore, williamScore, playerGlobal, alexGlobal, emilyGlobal, williamGlobal;
 
+    public AudioSource menuMusic, gameMusic, planeSound;
+
     // Use this for initialization
     void Awake () {
         DontDestroyOnLoad(this);
@@ -63,6 +65,11 @@ public class GameControl : MonoBehaviour {
         {
             levels[i] = false;
         }
+
+        playerGlobal = 0;
+        alexGlobal = 0;
+        emilyGlobal = 0;
+        williamGlobal = 0;
     }
 
     void Start()
@@ -77,7 +84,14 @@ public class GameControl : MonoBehaviour {
 
         if (Input.GetKeyDown(KeyCode.X))
         {
-            level=2;
+            level=3;
+            levels[level - 1] = true;
+            saveData();
+            GameObject.Find("MenuController").GetComponent<MenuControl>().loadLevel(level - 1);
+        }
+        if (Input.GetKeyDown(KeyCode.Z))
+        {
+            level = 2;
             levels[level - 1] = true;
             saveData();
             GameObject.Find("MenuController").GetComponent<MenuControl>().loadLevel(level - 1);
@@ -92,6 +106,8 @@ public class GameControl : MonoBehaviour {
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
             gamePaused = true;
+            gameMusic.Stop();
+            planeSound.Stop();
         }
 
         if (GameObject.Find("ScoreNumber") != null) GameObject.Find("ScoreNumber").GetComponent<TextMeshProUGUI>().text = score.ToString();
@@ -109,7 +125,7 @@ public class GameControl : MonoBehaviour {
             }
             else
             {
-                GameObject.Find("PenaltyTime").GetComponent<TextMeshProUGUI>().color = new Color32(255, 255, 255, 255);
+                GameObject.Find("PenaltyTime").GetComponent<TextMeshProUGUI>().color = new Color32(0, 0, 0, 255);
                 GameObject.Find("PenaltyTime").GetComponent<TextMeshProUGUI>().text = "+" + penaltyTime.ToString() + " seconds";
             }
         }
@@ -153,7 +169,7 @@ public class GameControl : MonoBehaviour {
                     actualEvent++;
                     messagesActivated = true;
                     GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMessage("Dany: " + GameObject.Find("Messages").transform.GetChild(1).transform.GetChild(0).GetComponent<Text>().text, 30);
-                    StartCoroutine(ExecuteAfterTime(3.0f));
+                    StartCoroutine(ExecuteAfterTime(2.0f));
                 }               
                 break;
             case 2:
@@ -161,7 +177,7 @@ public class GameControl : MonoBehaviour {
                 {
                     nextEvent = false;
                     actualEvent++;
-                    GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMessage("Dany: " + GameObject.Find("Messages").transform.GetChild(1).transform.GetChild(1).GetComponent<Text>().text, 30);//Message we must check some stuff
+                    GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMessage("Dany: " + GameObject.Find("Messages").transform.GetChild(1).transform.GetChild(1).GetComponent<Text>().text, 30);
                     StartCoroutine(ExecuteAfterTime(3.0f));
                 }
                 break;
@@ -170,7 +186,8 @@ public class GameControl : MonoBehaviour {
                 {
                     nextEvent = false;
                     actualEvent++;
-                    GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMessage("Dany: " + GameObject.Find("Messages").transform.GetChild(1).transform.GetChild(2).GetComponent<Text>().text, 30);//Message please move
+                    GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMessage("Dany: " + GameObject.Find("Messages").transform.GetChild(1).transform.GetChild(2).GetComponent<Text>().text, 30);
+                    GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMovementControls();
                     StartCoroutine(ExecuteAfterTime(3.0f));
                 }
                 break;
@@ -180,9 +197,9 @@ public class GameControl : MonoBehaviour {
                     nextEvent = false;
                     actualEvent++;
                     movementActivated = true;
-                    GameObject.Find("CanvasInGame").GetComponent<HUDControler>().HideMessage(); // movement controls shown & 10 sec to move
+                    GameObject.Find("CanvasInGame").GetComponent<HUDControler>().HideMessage();
                     GameObject.Find("CanvasInGame").GetComponent<HUDControler>().movementControl = true;
-                    GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMovementControls();
+                    GameObject.Find("CanvasInGame").GetComponent<HUDControler>().HideMovementControls();
                     StartCoroutine(ExecuteAfterTime(5.0f));
                 }
                 break;
@@ -212,6 +229,7 @@ public class GameControl : MonoBehaviour {
                     actualEvent++;
                     GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMessage("Dany: " + GameObject.Find("Messages").transform.GetChild(1).transform.GetChild(5).GetComponent<Text>().text, 30); // message boost 2
                     GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowBoost();
+                    GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowBoostControl();
                     StartCoroutine(ExecuteAfterTime(4.0f));
                 }
                 break;
@@ -222,7 +240,7 @@ public class GameControl : MonoBehaviour {
                     actualEvent++;
                     GameObject.Find("CanvasInGame").GetComponent<HUDControler>().HideMessage(); // boost controls shown & 5 sec to try boost
                     GameObject.Find("CanvasInGame").GetComponent<HUDControler>().boostControl = true;
-                    GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowBoostControl();
+                    GameObject.Find("CanvasInGame").GetComponent<HUDControler>().HideBoostControl();
                     boostActivated = true;
                     movementActivated = true;
                 }
@@ -266,7 +284,7 @@ public class GameControl : MonoBehaviour {
                     movementActivated = false;
                     GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ResetHUD();
                     GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMessage("Dany: " + GameObject.Find("Messages").transform.GetChild(1).transform.GetChild(8).GetComponent<Text>().text, 25); // message 
-                    StartCoroutine(ExecuteAfterTime(5.0f));
+                    StartCoroutine(ExecuteAfterTime(7.0f));
                 }
                 break;
             case 13:
@@ -276,7 +294,7 @@ public class GameControl : MonoBehaviour {
                     actualEvent++;
                     GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMessage("Dany: " + GameObject.Find("Messages").transform.GetChild(1).transform.GetChild(9).GetComponent<Text>().text, 25); // message 
                     GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowTime();
-                    StartCoroutine(ExecuteAfterTime(5.0f));
+                    StartCoroutine(ExecuteAfterTime(7.0f));
                 }
                 break;
             case 14:
@@ -285,7 +303,7 @@ public class GameControl : MonoBehaviour {
                     nextEvent = false;
                     actualEvent++;
                     GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMessage("Dany: " + GameObject.Find("Messages").transform.GetChild(1).transform.GetChild(10).GetComponent<Text>().text, 30); // message 
-                    StartCoroutine(ExecuteAfterTime(5.0f));
+                    StartCoroutine(ExecuteAfterTime(4.0f));
                 }
                 break;
             case 15:
@@ -316,8 +334,8 @@ public class GameControl : MonoBehaviour {
                     boostActivated = false;
                     movementActivated = false;
                     GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ResetHUD();
-                    GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMessage("Dany: Enhorabona, el teu temps ha sigut de " + finalTimer, 30); // message 
-                    StartCoroutine(ExecuteAfterTime(2.0f));
+                    GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMessage("Dany: Congratulations, your time has been  " + finalTimer + ".", 30); // message 
+                    StartCoroutine(ExecuteAfterTime(3.0f));
                 }
                 break;
             case 18:
@@ -326,7 +344,7 @@ public class GameControl : MonoBehaviour {
                     nextEvent = false;
                     actualEvent++;
                     GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMessage("Dany: " + GameObject.Find("Messages").transform.GetChild(1).transform.GetChild(12).GetComponent<Text>().text, 30); // message 
-                    StartCoroutine(ExecuteAfterTime(5.0f));
+                    StartCoroutine(ExecuteAfterTime(4.0f));
                 }
                 break;
             case 19:
@@ -335,7 +353,7 @@ public class GameControl : MonoBehaviour {
                     nextEvent = false;
                     actualEvent++;
                     GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMessage("Dany: " + GameObject.Find("Messages").transform.GetChild(1).transform.GetChild(13).GetComponent<Text>().text, 30); // message 
-                    StartCoroutine(ExecuteAfterTime(5.0f));
+                    StartCoroutine(ExecuteAfterTime(4.0f));
                 }
                 break;
             case 20:
@@ -345,7 +363,7 @@ public class GameControl : MonoBehaviour {
                     actualEvent++;
                     GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMessage("Dany: " + GameObject.Find("Messages").transform.GetChild(1).transform.GetChild(14).GetComponent<Text>().text, 25); // message 
                     GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowCoins();
-                    StartCoroutine(ExecuteAfterTime(5.0f));
+                    StartCoroutine(ExecuteAfterTime(7.0f));
                 }
                 break;
             case 21:
@@ -366,9 +384,9 @@ public class GameControl : MonoBehaviour {
                     actualEvent++;
                     boostActivated = false;
                     movementActivated = false;
-                    GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMessage("Dany: Enhorabona, el teu temps ha sigut de " + finalTimer + " i has aconseguit " + score.ToString() + " punts, per tant el teu temps final ha sigut: " + calculateFinalTime(finishTimer, score, penaltyTime), 30); // message 
+                    GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMessage("Dany: Congratulations, your time has been  " + finalTimer + " and you got " + score.ToString() + " points, so your final time is : " + calculateFinalTime(finishTimer, score, penaltyTime) + ".", 30); // message 
                     GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ResetHUD();
-                    StartCoroutine(ExecuteAfterTime(3.0f)); 
+                    StartCoroutine(ExecuteAfterTime(4.0f)); 
                 }
                 break;
             case 23:
@@ -387,7 +405,7 @@ public class GameControl : MonoBehaviour {
                     actualEvent++;
                     GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowPenalty();
                     GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMessage("Dany: " + GameObject.Find("Messages").transform.GetChild(1).transform.GetChild(16).GetComponent<Text>().text, 25); // message 
-                    StartCoroutine(ExecuteAfterTime(5.0f));
+                    StartCoroutine(ExecuteAfterTime(6.0f));
                 }
                 break;
             case 25:
@@ -396,7 +414,7 @@ public class GameControl : MonoBehaviour {
                     nextEvent = false;
                     actualEvent++;
                     GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMessage("Dany: " + GameObject.Find("Messages").transform.GetChild(1).transform.GetChild(17).GetComponent<Text>().text, 30); // message 
-                    StartCoroutine(ExecuteAfterTime(3.0f));
+                    StartCoroutine(ExecuteAfterTime(4.0f));
                 }
                 break;
             case 26:
@@ -417,9 +435,9 @@ public class GameControl : MonoBehaviour {
                     actualEvent++;
                     boostActivated = false;
                     movementActivated = false;
-                    GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMessage("Dany: Enhorabona, el teu temps ha sigut de " + finalTimer + ", has aconseguit " + score.ToString() + " punts i has tingut " + penaltyTime + " segons de penalització, per tant el teu temps final ha sigut: " + calculateFinalTime(finishTimer, score, penaltyTime), 25); // message 
+                    GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMessage("Dany: Congratulations, your time has been  " + finalTimer + ", you got " + score.ToString() + " points and have been penalized with " + penaltyTime + " seconds, so your final time is : " + calculateFinalTime(finishTimer, score, penaltyTime) + ".", 25); // message 
                     GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ResetHUD();
-                    StartCoroutine(ExecuteAfterTime(3.0f));
+                    StartCoroutine(ExecuteAfterTime(5.0f));
                 }
                 break;
             case 28:
@@ -428,7 +446,7 @@ public class GameControl : MonoBehaviour {
                     nextEvent = false;
                     actualEvent++;
                     GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMessage("Dany: " + GameObject.Find("Messages").transform.GetChild(1).transform.GetChild(18).GetComponent<Text>().text, 30); // message 
-                    StartCoroutine(ExecuteAfterTime(3.0f));
+                    StartCoroutine(ExecuteAfterTime(5.0f));
                 }
                 break;
             case 29:
@@ -437,7 +455,7 @@ public class GameControl : MonoBehaviour {
                     nextEvent = false;
                     actualEvent++;
                     GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMessage("Dany: " + GameObject.Find("Messages").transform.GetChild(1).transform.GetChild(19).GetComponent<Text>().text, 30); // message 
-                    StartCoroutine(ExecuteAfterTime(4.0f));
+                    StartCoroutine(ExecuteAfterTime(5.0f));
                 }
                 break;
             case 30:
@@ -457,9 +475,9 @@ public class GameControl : MonoBehaviour {
                     actualEvent++;
                     boostActivated = false;
                     movementActivated = false;
-                    GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMessage("Dany: Enhorabona, el teu temps ha sigut de " + finalTimer + ", has aconseguit " + score.ToString() + " punts i has tingut " + penaltyTime + " segons de penalització, per tant el teu temps final ha sigut: " + calculateFinalTime(finishTimer, score, penaltyTime), 25); // message 
+                    GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMessage("Dany: Congratulations, your time has been  " + finalTimer + ", you got " + score.ToString() + " points and have been penalized with " + penaltyTime + " seconds, so your final time is : " + calculateFinalTime(finishTimer, score, penaltyTime) + ".", 25); // message 
                     GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ResetHUD();
-                    StartCoroutine(ExecuteAfterTime(3.0f));
+                    StartCoroutine(ExecuteAfterTime(5.0f));
                 }
                 break;
             case 32:
@@ -468,7 +486,7 @@ public class GameControl : MonoBehaviour {
                     nextEvent = false;
                     actualEvent++;
                     GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMessage("Dany: " + GameObject.Find("Messages").transform.GetChild(1).transform.GetChild(20).GetComponent<Text>().text, 30); // message 
-                    StartCoroutine(ExecuteAfterTime(3.0f));
+                    StartCoroutine(ExecuteAfterTime(5.0f));
                 }
                 break;
             case 33:
@@ -477,7 +495,7 @@ public class GameControl : MonoBehaviour {
                     nextEvent = false;
                     actualEvent++;
                     GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMessage("Dany: " + GameObject.Find("Messages").transform.GetChild(1).transform.GetChild(21).GetComponent<Text>().text, 30); // message 
-                    StartCoroutine(ExecuteAfterTime(3.0f));
+                    StartCoroutine(ExecuteAfterTime(4.0f));
                 }
                 break;
             case 34:
@@ -497,9 +515,9 @@ public class GameControl : MonoBehaviour {
                     actualEvent++;
                     boostActivated = false;
                     movementActivated = false;
-                    GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMessage("Dany: Enhorabona, el teu temps ha sigut de " + finalTimer + ", has aconseguit " + score.ToString() + " punts i has tingut " + penaltyTime + " segons de penalització, per tant el teu temps final ha sigut: " + calculateFinalTime(finishTimer, score, penaltyTime), 25); // message 
+                    GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMessage("Dany: Congratulations, your time has been  " + finalTimer + ", you got " + score.ToString() + " points and have been penalized with " + penaltyTime + " seconds, so your final time is : " + calculateFinalTime(finishTimer, score, penaltyTime) + ".", 25); // message 
                     GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ResetHUD();
-                    StartCoroutine(ExecuteAfterTime(3.0f));
+                    StartCoroutine(ExecuteAfterTime(5.0f));
                 }
                 break;
             case 36:
@@ -517,7 +535,7 @@ public class GameControl : MonoBehaviour {
                     nextEvent = false;
                     actualEvent++;
                     GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMessage("Dany: " + GameObject.Find("Messages").transform.GetChild(1).transform.GetChild(23).GetComponent<Text>().text, 25); // message 
-                    StartCoroutine(ExecuteAfterTime(5.0f));
+                    StartCoroutine(ExecuteAfterTime(6.0f));
                 }
                 break;
             case 38:
@@ -528,7 +546,7 @@ public class GameControl : MonoBehaviour {
                     GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMessage("Dany: " + GameObject.Find("Messages").transform.GetChild(1).transform.GetChild(24).GetComponent<Text>().text, 25); // message 
                     onPointActivated = true;
                     GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowOnPoint();
-                    StartCoroutine(ExecuteAfterTime(5.0f));
+                    StartCoroutine(ExecuteAfterTime(6.0f));
                 }
                 break;
             case 39:
@@ -537,7 +555,8 @@ public class GameControl : MonoBehaviour {
                     nextEvent = false;
                     actualEvent++;
                     GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMessage("Dany: " + GameObject.Find("Messages").transform.GetChild(1).transform.GetChild(25).GetComponent<Text>().text, 25); // message 
-                    StartCoroutine(ExecuteAfterTime(6.0f));
+                    GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowTricksControls();
+                    StartCoroutine(ExecuteAfterTime(7.0f));
                 }
                 break;
             case 40:
@@ -550,7 +569,7 @@ public class GameControl : MonoBehaviour {
                     boostActivated = true;
                     movementActivated = true;
                     GameObject.Find("CanvasInGame").GetComponent<HUDControler>().tricksControl = true;
-                    GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowTricksControls();
+                    GameObject.Find("CanvasInGame").GetComponent<HUDControler>().HideTricksControls();
                 }
                 break;
             case 41:
@@ -561,9 +580,9 @@ public class GameControl : MonoBehaviour {
                     tricksActivated = false;
                     boostActivated = false;
                     movementActivated = false;
-                    GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMessage("Dany: Enhorabona, el teu temps ha sigut de " + finalTimer + ", has aconseguit " + score.ToString() + " punts i has tingut " + penaltyTime + " segons de penalització, per tant el teu temps final ha sigut: " + calculateFinalTime(finishTimer, score, penaltyTime), 25); // message 
+                    GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMessage("Dany: Congratulations, your time has been  " + finalTimer + ", you got " + score.ToString() + " points and have been penalized with " + penaltyTime + " seconds, so your final time is : " + calculateFinalTime(finishTimer, score, penaltyTime) + ".", 25); // message 
                     GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ResetHUD();
-                    StartCoroutine(ExecuteAfterTime(3.0f));
+                    StartCoroutine(ExecuteAfterTime(5.0f));
                 }
                 break;
             case 42:
@@ -572,7 +591,7 @@ public class GameControl : MonoBehaviour {
                     nextEvent = false;
                     actualEvent++;
                     GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMessage("Dany: " + GameObject.Find("Messages").transform.GetChild(1).transform.GetChild(26).GetComponent<Text>().text, 30); // message 
-                    StartCoroutine(ExecuteAfterTime(3.0f));
+                    StartCoroutine(ExecuteAfterTime(5.0f));
                 }
                 break;
             case 43:
@@ -580,8 +599,8 @@ public class GameControl : MonoBehaviour {
                 {
                     nextEvent = false;
                     actualEvent++;
-                    GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMessage("Dany: " + GameObject.Find("Messages").transform.GetChild(1).transform.GetChild(27).GetComponent<Text>().text, 30); // message 
-                    StartCoroutine(ExecuteAfterTime(3.0f));
+                    GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMessage("Dany: " + GameObject.Find("Messages").transform.GetChild(1).transform.GetChild(27).GetComponent<Text>().text, 25); // message 
+                    StartCoroutine(ExecuteAfterTime(7.0f));
                 }
                 break;
             case 44:
@@ -589,8 +608,8 @@ public class GameControl : MonoBehaviour {
                 {
                     nextEvent = false;
                     actualEvent++;
-                    GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMessage("Dany: " + GameObject.Find("Messages").transform.GetChild(1).transform.GetChild(28).GetComponent<Text>().text, 25); // message 
-                    StartCoroutine(ExecuteAfterTime(5.0f));
+                    GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMessage("Dany: " + GameObject.Find("Messages").transform.GetChild(1).transform.GetChild(28).GetComponent<Text>().text, 30); // message 
+                    StartCoroutine(ExecuteAfterTime(4.0f));
                 }
                 break;
             case 45:
@@ -599,7 +618,7 @@ public class GameControl : MonoBehaviour {
                     nextEvent = false;
                     actualEvent++;
                     GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMessage("Dany: " + GameObject.Find("Messages").transform.GetChild(1).transform.GetChild(29).GetComponent<Text>().text, 30); // message 
-                    StartCoroutine(ExecuteAfterTime(3.0f));
+                    StartCoroutine(ExecuteAfterTime(4.0f));
                 }
                 break;
             case 46:
@@ -622,9 +641,9 @@ public class GameControl : MonoBehaviour {
                     tricksActivated = false;
                     boostActivated = false;
                     movementActivated = false;
-                    GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMessage("Dany: Enhorabona, el teu temps ha sigut de " + finalTimer + ", has aconseguit " + score.ToString() + " punts i has tingut " + penaltyTime + " segons de penalització, per tant el teu temps final ha sigut: " + calculateFinalTime(finishTimer, score, penaltyTime), 25); // message 
+                    GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMessage("Dany: Congratulations, your time has been  " + finalTimer + ", you got " + score.ToString() + " points and have been penalized with " + penaltyTime + " seconds, so your final time is : " + calculateFinalTime(finishTimer, score, penaltyTime) + ".", 25); // message 
                     GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ResetHUD();
-                    StartCoroutine(ExecuteAfterTime(3.0f));
+                    StartCoroutine(ExecuteAfterTime(5.0f));
                 }
                 break;
             case 48:
@@ -633,7 +652,7 @@ public class GameControl : MonoBehaviour {
                     nextEvent = false;
                     actualEvent++;
                     GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMessage("Dany: " + GameObject.Find("Messages").transform.GetChild(1).transform.GetChild(30).GetComponent<Text>().text, 30); // message 
-                    StartCoroutine(ExecuteAfterTime(3.0f));
+                    StartCoroutine(ExecuteAfterTime(4.0f));
                 }
                 break;
             case 49:
@@ -653,7 +672,7 @@ public class GameControl : MonoBehaviour {
                     level++;
                     levels[level - 1] = true;
                     saveData();
-                    GameObject.Find("MenuController").GetComponent<MenuControl>().loadLevel(level - 1);
+                    GameObject.Find("MenuController").GetComponent<MenuControl>().Fade(level - 1);
                 }
                 break;
             default:
@@ -672,7 +691,7 @@ public class GameControl : MonoBehaviour {
                     actualEvent++;
                     messagesActivated = true;
                     GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMessage("Dany: " + GameObject.Find("Messages").transform.GetChild(1).transform.GetChild(0).GetComponent<Text>().text, 30);
-                    StartCoroutine(ExecuteAfterTime(4.0f));
+                    StartCoroutine(ExecuteAfterTime(5.0f));
                 }
                 break;
             case 2:
@@ -698,7 +717,7 @@ public class GameControl : MonoBehaviour {
                 {
                     nextEvent = false;
                     actualEvent++;
-                    GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMessage("Dany: Enhorabona, el teu temps ha sigut de " + calculateFinalTime(finishTimer, score, penaltyTime) + ". És el nou temps a batre. Ara correrà l'Alex.", 30);
+                    GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMessage("Dany: Congratulations, your time has been " + calculateFinalTime(finishTimer, score, penaltyTime) + ". A new record. Now it’s Alex’s turn.", 30);
                     boostActivated = false;
                     coinsActivated = false;
                     movementActivated = false;
@@ -708,7 +727,7 @@ public class GameControl : MonoBehaviour {
                     timerActivated = false;
                     tricksActivated = false;
                     getTimes1();
-                    StartCoroutine(ExecuteAfterTime(4.0f));
+                    StartCoroutine(ExecuteAfterTime(5.0f));
                 }
                 break;
             case 4:
@@ -770,9 +789,9 @@ public class GameControl : MonoBehaviour {
                 {
                     nextEvent = false;
                     actualEvent++;
-                    if(playerScore > alexScore) GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMessage("Dany: I ja ha acabat. Ha fet un temps de " + alexTime + ". S'ha posat en segona posició, mantens el liderat. Ara correrà l'Emily.", 30);
-                    else GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMessage("Dany: I ja ha acabat. Ha fet un temps de " + alexTime + ". S'ha posat en primera posició, ara ets segon. Ara correrà l'Emily.", 30);
-                    StartCoroutine(ExecuteAfterTime(4.0f));
+                    if(playerScore > alexScore) GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMessage("Dany: And it’s done. His time is " + alexTime + ". He’s in second position right behind you. Now it’s Emily’s turn.", 30);
+                    else GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMessage("Dany: And it’s done. His time is " + alexTime + ". He’s right now in first position, you’re second for now. Now it’s Emily’s turn.", 30);
+                    StartCoroutine(ExecuteAfterTime(5.0f));
                 }
                 break;
             case 11:
@@ -799,7 +818,7 @@ public class GameControl : MonoBehaviour {
                     nextEvent = false;
                     actualEvent++;
                     GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMessage("Dany: " + GameObject.Find("Messages").transform.GetChild(1).transform.GetChild(2).GetComponent<Text>().text, 30);
-                    StartCoroutine(ExecuteAfterTime(4.0f));
+                    StartCoroutine(ExecuteAfterTime(5.0f));
                 }
                 break;
             case 14:
@@ -835,11 +854,11 @@ public class GameControl : MonoBehaviour {
                     actualEvent++;
                     if (playerScore > emilyScore)
                     {
-                        if(playerScore > alexScore) GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMessage("Dany: I ja ha acabat. Ha fet un temps de " + alexTime + ". S'ha posat en tercera posició, mantens el liderat. Ara correrà en William.", 30);
-                        else GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMessage("Dany: I ja ha acabat. Ha fet un temps de " + alexTime + ". S'ha posat en tercera posició, continues segon. Ara correrà en William.", 30);
+                        if(playerScore > alexScore) GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMessage("Dany: And it’s done. Her time is " + emilyTime + ". She’s in third position, you're still first. Now it’s William’s turn.", 30);
+                        else GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMessage("Dany: And it’s done. Her time is " + emilyTime + ". She’s in third position, you're still second. Now it’s William’s turn.", 30);
                     }
-                    else GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMessage("Dany: I ja ha acabat. Ha fet un temps de " + alexTime + ". S'ha posat en segona posició, ara ets tercer. Ara correrà en William.", 30);
-                    StartCoroutine(ExecuteAfterTime(4.0f));
+                    else GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMessage("Dany: And it’s done. Her time is " + emilyTime + ". She’s right now in second position, you’re third for now. Now it’s William’s turn.", 30);
+                    StartCoroutine(ExecuteAfterTime(5.0f));
                 }
                 break;
             case 18:
@@ -866,7 +885,7 @@ public class GameControl : MonoBehaviour {
                     nextEvent = false;
                     actualEvent++;
                     GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMessage("Dany: " + GameObject.Find("Messages").transform.GetChild(1).transform.GetChild(3).GetComponent<Text>().text, 30);
-                    StartCoroutine(ExecuteAfterTime(3.0f));
+                    StartCoroutine(ExecuteAfterTime(4.0f));
                 }
                 break;
             case 21:
@@ -902,12 +921,12 @@ public class GameControl : MonoBehaviour {
                     actualEvent++;
                     if (playerScore > williamScore)
                     {
-                        if (playerScore > alexScore) GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMessage("Dany: I ja ha acabat. Ha fet un temps de " + alexTime + ". S'ha posat en quarta posició, mantens el liderat. Donem-li un cop d'ull a la classificació.", 30);
-                        else if(playerScore > emilyScore) GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMessage("Dany: I ja ha acabat. Ha fet un temps de " + alexTime + ". S'ha posat en quarta posició, continues segon. Donem-li un cop d'ull a la classificació.", 30);
-                        else GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMessage("Dany: I ja ha acabat. Ha fet un temps de " + alexTime + ". S'ha posat en quarta posició, continues tercer. Donem-li un cop d'ull a la classificació.", 30);
+                        if (playerScore > alexScore) GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMessage("Dany: And it’s done. His time is " + williamTime + ". He’s in fourth position, you’re still first. Let’s have a look at the race results.", 30);
+                        else if(playerScore > emilyScore) GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMessage("Dany: And it’s done. His time is " + williamTime + ". He’s in fourth position, you’re still second. Let’s have a look at the race results.", 30);
+                        else GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMessage("Dany: And it’s done. His time is " + williamTime + ". He’s in fourth position right behind you. Let’s have a look at the race results.", 30);
                     }
-                    else GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMessage("Dany: I ja ha acabat. Ha fet un temps de " + alexTime + ". S'ha posat en tercera posició, ara ets quart. Donem-li un cop d'ull a la classificació.", 30);
-                    StartCoroutine(ExecuteAfterTime(4.0f));
+                    else GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMessage("Dany: And it’s done. His time is " + williamTime + ". He’s right now in third position, you’re fourth for now. Let’s have a look at the race results.", 30);
+                    StartCoroutine(ExecuteAfterTime(5.0f));
                 }
                 break;
             case 25:
@@ -916,6 +935,7 @@ public class GameControl : MonoBehaviour {
                     nextEvent = false;
                     actualEvent++;
                     WilliamPlane.GetComponent<PlaneMovement>().active = false;
+                    planeSound.Stop();
                     GameObject.Find("CanvasInGame").GetComponent<HUDControler>().HideMessage();
                     GameObject.Find("CanvasInGame").GetComponent<HUDControler>().printRaceResults();
                     StartCoroutine(ExecuteAfterTime(5.0f));
@@ -931,14 +951,14 @@ public class GameControl : MonoBehaviour {
                     StartCoroutine(ExecuteAfterTime(3.0f));
                 }
                 break;
-            case 28:
+            case 27:
                 if(nextEvent)
                 {
                     nextEvent = false;
                     level++;
                     levels[level - 1] = true;
                     saveData();
-                    GameObject.Find("MenuController").GetComponent<MenuControl>().loadLevel(level - 1);
+                    GameObject.Find("MenuController").GetComponent<MenuControl>().Fade(level - 1);
                 }
                 break;
             default:
@@ -957,7 +977,7 @@ public class GameControl : MonoBehaviour {
                     actualEvent++;
                     messagesActivated = true;
                     GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMessage("Dany: " + GameObject.Find("Messages").transform.GetChild(1).transform.GetChild(0).GetComponent<Text>().text, 30);
-                    StartCoroutine(ExecuteAfterTime(4.0f));
+                    StartCoroutine(ExecuteAfterTime(5.0f));
                 }
                 break;
             case 2:
@@ -983,7 +1003,7 @@ public class GameControl : MonoBehaviour {
                 {
                     nextEvent = false;
                     actualEvent++;
-                    GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMessage("Dany: Enhorabona, el teu temps ha sigut de " + calculateFinalTime(finishTimer, score, penaltyTime) + ". És el nou temps a batre. Ara correrà l'Alex.", 30);
+                    GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMessage("Dany: Congratulations, your time has been " + calculateFinalTime(finishTimer, score, penaltyTime) + ". A new record. Now it’s Alex’s turn.", 30);
                     boostActivated = false;
                     coinsActivated = false;
                     movementActivated = false;
@@ -993,7 +1013,7 @@ public class GameControl : MonoBehaviour {
                     timerActivated = false;
                     tricksActivated = false;
                     getTimes2();
-                    StartCoroutine(ExecuteAfterTime(4.0f));
+                    StartCoroutine(ExecuteAfterTime(5.0f));
                 }
                 break;
             case 4:
@@ -1021,7 +1041,7 @@ public class GameControl : MonoBehaviour {
                     nextEvent = false;
                     actualEvent++;
                     GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMessage("Dany: " + GameObject.Find("Messages").transform.GetChild(1).transform.GetChild(1).GetComponent<Text>().text, 30);
-                    StartCoroutine(ExecuteAfterTime(4.0f));
+                    StartCoroutine(ExecuteAfterTime(5.0f));
                 }
                 break;
             case 7:
@@ -1055,9 +1075,9 @@ public class GameControl : MonoBehaviour {
                 {
                     nextEvent = false;
                     actualEvent++;
-                    if (playerScore > alexScore) GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMessage("Dany: I ja ha acabat. Ha fet un temps de " + alexTime + ". S'ha posat en segona posició, mantens el liderat. Ara correrà l'Emily.", 30);
-                    else GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMessage("Dany: I ja ha acabat. Ha fet un temps de " + alexTime + ". S'ha posat en primera posició, ara ets segon. Ara correrà l'Emily.", 30);
-                    StartCoroutine(ExecuteAfterTime(4.0f));
+                    if (playerScore > alexScore) GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMessage("Dany: And it’s done. His time is " + alexTime + ". He’s in second position right behind you. Now it’s Emily’s turn.", 30);
+                    else GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMessage("Dany: And it’s done. His time is " + alexTime + ". He’s right now in first position, you’re second for now. Now it’s Emily’s turn.", 30);
+                    StartCoroutine(ExecuteAfterTime(5.0f));
                 }
                 break;
             case 11:
@@ -1084,7 +1104,7 @@ public class GameControl : MonoBehaviour {
                     nextEvent = false;
                     actualEvent++;
                     GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMessage("Dany: " + GameObject.Find("Messages").transform.GetChild(1).transform.GetChild(2).GetComponent<Text>().text, 30);
-                    StartCoroutine(ExecuteAfterTime(4.0f));
+                    StartCoroutine(ExecuteAfterTime(5.0f));
                 }
                 break;
             case 14:
@@ -1118,13 +1138,13 @@ public class GameControl : MonoBehaviour {
                 {
                     nextEvent = false;
                     actualEvent++;
-                    if (playerScore > emilyScore)
+                    if (playerScore > alexScore)
                     {
-                        if (playerScore > alexScore) GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMessage("Dany: I ja ha acabat. Ha fet un temps de " + alexTime + ". S'ha posat en tercera posició, mantens el liderat. Ara correrà en William.", 30);
-                        else GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMessage("Dany: I ja ha acabat. Ha fet un temps de " + alexTime + ". S'ha posat en tercera posició, continues segon. Ara correrà en William.", 30);
+                        if (playerScore > emilyScore) GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMessage("Dany: And it’s done. Her time is " + emilyTime + ". She’s in second position right behind you. Now it’s William’s turn.", 30);
+                        else GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMessage("Dany: And it’s done. Her time is " + emilyTime + ". She’s in first position,  you’re second for now.Now it’s William’s turn.", 30);
                     }
-                    else GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMessage("Dany: I ja ha acabat. Ha fet un temps de " + alexTime + ". S'ha posat en segona posició, ara ets tercer. Ara correrà en William.", 30);
-                    StartCoroutine(ExecuteAfterTime(4.0f));
+                    else GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMessage("Dany: And it’s done. Her time is " + emilyTime + ". She’s right now in first position, you’re third for now. Now it’s William’s turn.", 30);
+                    StartCoroutine(ExecuteAfterTime(5.0f));
                 }
                 break;
             case 18:
@@ -1151,7 +1171,7 @@ public class GameControl : MonoBehaviour {
                     nextEvent = false;
                     actualEvent++;
                     GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMessage("Dany: " + GameObject.Find("Messages").transform.GetChild(1).transform.GetChild(3).GetComponent<Text>().text, 30);
-                    StartCoroutine(ExecuteAfterTime(3.0f));
+                    StartCoroutine(ExecuteAfterTime(4.0f));
                 }
                 break;
             case 21:
@@ -1185,14 +1205,14 @@ public class GameControl : MonoBehaviour {
                 {
                     nextEvent = false;
                     actualEvent++;
-                    if (playerScore > williamScore)
+                    if (playerScore > emilyScore) GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMessage("Dany: And it’s done. His time is " + williamTime + ". He’s right now in third position, you’re still first. Let’s have a look at the race results.", 30);
+                    else
                     {
-                        if (playerScore > alexScore) GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMessage("Dany: I ja ha acabat. Ha fet un temps de " + alexTime + ". S'ha posat en quarta posició, mantens el liderat. Donem-li un cop d'ull a la classificació.", 30);
-                        else if (playerScore > emilyScore) GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMessage("Dany: I ja ha acabat. Ha fet un temps de " + alexTime + ". S'ha posat en quarta posició, continues segon. Donem-li un cop d'ull a la classificació.", 30);
-                        else GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMessage("Dany: I ja ha acabat. Ha fet un temps de " + alexTime + ". S'ha posat en quarta posició, continues tercer. Donem-li un cop d'ull a la classificació.", 30);
+                        if (playerScore > williamScore) GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMessage("Dany: And it’s done. His time is " + williamTime + ". He’s in third position right behind you. Let’s have a look at the race results.", 30);
+                        else if (playerScore > alexScore) GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMessage("Dany: And it’s done. His time is " + williamTime + ". He’s in second position, you’re third for now. Let’s have a look at the race results.", 30);
+                        else GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMessage("Dany: And it’s done. His time is " + williamTime + ". He’s in second position, you're fourth for now. Let’s have a look at the race results.", 30);
                     }
-                    else GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMessage("Dany: I ja ha acabat. Ha fet un temps de " + alexTime + ". S'ha posat en tercera posició, ara ets quart. Donem-li un cop d'ull a la classificació.", 30);
-                    StartCoroutine(ExecuteAfterTime(4.0f));
+                    StartCoroutine(ExecuteAfterTime(5.0f));
                 }
                 break;
             case 25:
@@ -1201,8 +1221,9 @@ public class GameControl : MonoBehaviour {
                     nextEvent = false;
                     actualEvent++;
                     WilliamPlane.GetComponent<PlaneMovement>().active = false;
+                    planeSound.Stop();
                     GameObject.Find("CanvasInGame").GetComponent<HUDControler>().HideMessage();
-                    GameObject.Find("CanvasInGame").GetComponent<HUDControler>().printRaceResults();
+                    GameObject.Find("CanvasInGame").GetComponent<HUDControler>().printRaceResults2();
                     StartCoroutine(ExecuteAfterTime(5.0f));
                 }
                 break;
@@ -1213,10 +1234,10 @@ public class GameControl : MonoBehaviour {
                     actualEvent++;
                     GameObject.Find("CanvasInGame").GetComponent<HUDControler>().HideResults();
                     GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMessage("Dany: " + GameObject.Find("Messages").transform.GetChild(1).transform.GetChild(4).GetComponent<Text>().text, 30);
-                    StartCoroutine(ExecuteAfterTime(3.0f));
+                    StartCoroutine(ExecuteAfterTime(4.0f));
                 }
                 break;
-            case 28:
+            case 27:
                 if (nextEvent)
                 {
                     if (nextEvent)
@@ -1230,17 +1251,38 @@ public class GameControl : MonoBehaviour {
                     }
                 }
                 break;
-            case 29:
+            case 28:
                 if (nextEvent)
                 {
                     nextEvent = false;
                     actualEvent++;
                     GameObject.Find("CanvasInGame").GetComponent<HUDControler>().HideResults();
-                    GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMessage("Dany: " + GameObject.Find("Messages").transform.GetChild(1).transform.GetChild(4).GetComponent<Text>().text, 30);
-                    StartCoroutine(ExecuteAfterTime(3.0f));
+                    if (playerGlobal >= emilyGlobal)
+                    {
+                        GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMessage("Dany: Congratulations! You’re the campion. Enjoy your well deserved victory.", 30);
+                        GameObject.Find("Trophy1st").GetComponent<MeshRenderer>().enabled = true;
+                        GameObject.Find("Trophy1st").transform.position = WilliamPlane.transform.GetChild(2).transform.position + new Vector3(0, -3.6f, 7.5f);
+                    }
+                    else if (playerGlobal >= alexGlobal)
+                    {
+                        GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMessage("Dany: Congratulations! You were so close in your debut, keep up the good work.", 30);
+                        GameObject.Find("Trophy2nd").GetComponent<MeshRenderer>().enabled = true;
+                        GameObject.Find("Trophy2nd").transform.position = WilliamPlane.transform.GetChild(2).transform.position + new Vector3(0, -3.6f, 7.5f);
+                    }
+                    else if (playerGlobal >= williamGlobal)
+                    {
+                        GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMessage("Dany: Congratulations! You have achieved a top 3 position in your debut, keep up the good work.", 30);
+                        GameObject.Find("Trophy3rd").GetComponent<MeshRenderer>().enabled = true;
+                        GameObject.Find("Trophy3rd").transform.position = WilliamPlane.transform.GetChild(2).transform.position + new Vector3(0, -3.6f, 7.5f);
+                    }
+                    else
+                    {
+                        GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ShowMessage("Dany: You’ve done everything you could, we’re proud. Next time will be your chance.", 30);
+                    }
+                    StartCoroutine(ExecuteAfterTime(5.0f));
                 }
                 break;
-            case 30:
+            case 29:
                 if(nextEvent)
                 { 
                     nextEvent = false;
@@ -1256,22 +1298,28 @@ public class GameControl : MonoBehaviour {
 
     private void OnLevelWasLoaded(int level)
     {
-        //Debug.Log("LEVEL LOADED");
         StopAllCoroutines();
         if (SceneManager.GetActiveScene().name == "Menus")
         {
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
+            menuMusic.Play();
+            gameMusic.Stop();
+            planeSound.Stop();
         }
         else
         {
+            menuMusic.Stop();
+            gameMusic.Play();
+            planeSound.Play();
             Time.timeScale = 1.0f;
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
             switch (level)
             {
-                case 1:
+                case 2:
                     GameObject.Find("Plane").GetComponent<PlayerController>().speed = 2.0f;
+                    GameObject.Find("Plane").GetComponent<PlayerController>().Start();
                     GameObject.Find("CanvasInGame").GetComponent<HUDControler>().HideHUD();
                     GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ResetHUD();
                     boostActivated = false;
@@ -1291,7 +1339,7 @@ public class GameControl : MonoBehaviour {
                     actualEvent = 1;
                     //StartCoroutine(ExecuteAfterTime(3.0f));
                     break;
-                case 2:
+                case 3:
                     if (GameObject.Find("Plane") != null)
                     {
                         Plane = GameObject.Find("Plane");
@@ -1349,7 +1397,7 @@ public class GameControl : MonoBehaviour {
                     nextEvent = false;
                     actualEvent = 1;
                     break;
-                case 3:
+                case 4:
                     if (GameObject.Find("Plane") != null)
                     {
                         Plane = GameObject.Find("Plane");
@@ -1383,13 +1431,6 @@ public class GameControl : MonoBehaviour {
                     GameObject.Find("Plane").GetComponent<PlayerController>().Start();
                     GameObject.Find("CanvasInGame").GetComponent<HUDControler>().HideHUD();
                     GameObject.Find("CanvasInGame").GetComponent<HUDControler>().ResetHUD();
-                    if(playerGlobal == 0)
-                    {
-                        playerGlobal += 5;
-                        alexGlobal += 3;
-                        emilyGlobal += 2;
-                        williamGlobal += 1;
-                    }
                     boostActivated = false;
                     coinsActivated = false;
                     messagesActivated = false;
@@ -1406,9 +1447,20 @@ public class GameControl : MonoBehaviour {
                     alexScore = 0;
                     emilyScore = 0;
                     williamScore = 0;
+                    playerGlobal = 0;
+                    alexGlobal = 0;
+                    emilyGlobal = 0;
+                    williamGlobal = 0;
                     stopTimer = true;
                     nextEvent = false;
                     actualEvent = 1;
+                    if (playerGlobal == 0)
+                    {
+                        playerGlobal = 5;
+                        alexGlobal = 3;
+                        emilyGlobal = 2;
+                        williamGlobal = 1;
+                    }
                     break;
                 default:
                     break;
@@ -1491,7 +1543,7 @@ public class GameControl : MonoBehaviour {
         }
         else if (penaltyTime > 75)
         {
-            if(score > 5000)
+            if(score > 4000)
             {
                 float alex = (float)Random.Range(finalScore - 10, finalScore);
                 float emily = (float)Random.Range(finalScore, finalScore + 10);
@@ -1530,7 +1582,7 @@ public class GameControl : MonoBehaviour {
         }
         else if(penaltyTime > 40)
         {
-            if(score > 5000)
+            if(score > 4000)
             {
                 float alex = (float)Random.Range(finalScore, finalScore + 10);
                 float emily = (float)Random.Range(finalScore + 10, finalScore + 20);
@@ -1591,7 +1643,7 @@ public class GameControl : MonoBehaviour {
     {
         if (penaltyTime > 125)
         {
-            if (score > 5000)
+            if (score > 4000)
             {
                 float emily = (float)Random.Range(finalScore - 20, finalScore - 10);
                 float william = (float)Random.Range(finalScore - 10, finalScore);
@@ -1630,7 +1682,7 @@ public class GameControl : MonoBehaviour {
         }
         else if (penaltyTime > 75)
         {
-            if (score > 5000)
+            if (score > 4000)
             {
                 float emily = (float)Random.Range(finalScore - 10, finalScore);
                 float william = (float)Random.Range(finalScore, finalScore + 10);
@@ -1669,7 +1721,7 @@ public class GameControl : MonoBehaviour {
         }
         else if (penaltyTime > 40)
         {
-            if (score > 5000)
+            if (score > 4000)
             {
                 float emily = (float)Random.Range(finalScore, finalScore + 10);
                 float william = (float)Random.Range(finalScore + 10, finalScore + 20);
@@ -1769,7 +1821,6 @@ public class GameControl : MonoBehaviour {
     {
         yield return new WaitForSeconds(time);
 
-        Debug.Log("Hi");
         nextEvent = true;
     }
 }

@@ -6,6 +6,7 @@ public class Coins : MonoBehaviour {
 
     public int coinsToAdd;
     public bool stop = false;
+    public AudioSource source;
 
     private void Update()
     {
@@ -17,6 +18,7 @@ public class Coins : MonoBehaviour {
         if (other.CompareTag("Player"))
         {
             GameControl.control.score += coinsToAdd;
+            source.Play();
             StartCoroutine(ShowAfterTime(5.0f));
             if (!stop)
             {

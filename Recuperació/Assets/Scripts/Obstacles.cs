@@ -5,6 +5,8 @@ using UnityEngine;
 public class Obstacles : MonoBehaviour {
 
     public bool stop = false;
+    public AudioSource source;
+
     // Use this for initialization
     void Start()
     {
@@ -22,6 +24,7 @@ public class Obstacles : MonoBehaviour {
         if (collision.gameObject.tag == "Player")
         {
             GameControl.control.penaltyTime += 5;
+            source.Play();
         }
         StartCoroutine(ShowAfterTime(5.0f));
         if (!stop)

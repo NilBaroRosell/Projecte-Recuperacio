@@ -129,7 +129,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1406023587495074}
   m_LocalRotation: {x: -0.70710677, y: 0, z: 0, w: 0.70710677}
-  m_LocalPosition: {x: 10, y: 10, z: -405}
+  m_LocalPosition: {x: 10, y: 10, z: -272}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4378838983386206}
@@ -159,7 +159,7 @@ Camera:
     width: 1
     height: 1
   near clip plane: 0.3
-  far clip plane: 1000
+  far clip plane: 2000
   field of view: 60
   orthographic: 0
   orthographic size: 5
@@ -373,7 +373,6 @@ MonoBehaviour:
   propBlured: {fileID: 1747037910002096}
   loopAvailable: {fileID: 0}
   back: 0
-  front: 0
   left: 0
   right: 0
   actualRotation: {x: 0, y: 0, z: 0}

@@ -8,7 +8,7 @@ public class PlayerController : MonoBehaviour {
     public float speed = 2f;
     private float boostMultiplier = 2f;
     private float movementMultiplier = 0.5f;
-    private float trickMultiplier = 0.2f;
+    private float trickMultiplier = 0.8f;
     public float boostAmount, boostLost;
     public int targetMultiplier;
 
@@ -22,7 +22,7 @@ public class PlayerController : MonoBehaviour {
     private float moveHorizontal;
     private float moveVertical;
 
-    public bool back, front, left, right;
+    public bool back, left, right;
 
     private int rotation;
     public Vector3 actualRotation, initialRotation;
@@ -31,7 +31,7 @@ public class PlayerController : MonoBehaviour {
     private int spin, flip;
 
     public bool onPoint;
-    private float decreaseAmount = 0.0033f;
+    private float decreaseAmount = 0.0055f;
 
     public void Start()
     {
@@ -39,7 +39,6 @@ public class PlayerController : MonoBehaviour {
         if (GameObject.Find("BoostBar") != null) GameObject.Find("BoostBar").GetComponent<Image>().fillAmount = boostAmount;
         boostLost = 0.5f;
         back = false;
-        front = false;
         left = false;
         right = false;
         rotation = 0;
@@ -82,18 +81,12 @@ public class PlayerController : MonoBehaviour {
             if(GameControl.control.tricksActivated)
             {
                 if (back) Backflip();
-                else if (front) Frontflip();
                 else if (left) LeftSpin();
                 else if (right) RightSpin();
                 else if (Input.GetButtonDown("Backflip") && onPoint)
                 {
                     back = true;
                     Backflip();
-                }
-                else if (Input.GetButtonDown("Frontflip") && onPoint)
-                {
-                    front = true;
-                    Frontflip();
                 }
                 else if (Input.GetButtonDown("LeftSpin"))
                 {
@@ -176,23 +169,6 @@ public class PlayerController : MonoBehaviour {
         }
     }
 
-    void Frontflip()
-    {
-        moveDirection = new Vector3(0.0f, -5 * movementMultiplier, speed * trickMultiplier);
-        gameObject.transform.position += moveDirection;
-        if (rotation < 360)
-        {
-            gameObject.transform.Rotate(10.0f, 0.0f, 0.0f);
-            rotation += 10;
-        }
-        else
-        {
-            GameControl.control.score += flip * targetMultiplier;
-            rotation = 0;
-            front = false;
-        }
-    }
-
     void LeftSpin()
     {
         moveDirection = new Vector3(-movementMultiplier, 0.0f, speed * trickMultiplier);
@@ -232,7 +208,7 @@ public class PlayerController : MonoBehaviour {
     {
         if (targetMultiplier != 1)
         {
-            StartCoroutine(MultiplierTimeLeft(5.0f));
+            StartCoroutine(MultiplierTimeLeft(3.0f));
         }
     }
 

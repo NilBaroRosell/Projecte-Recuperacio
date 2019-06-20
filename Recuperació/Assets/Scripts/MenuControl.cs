@@ -5,14 +5,12 @@ using UnityEngine.Audio;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
-public class MenuControl : MonoBehaviour {
-
-    private GameObject startButton;
+public class MenuControl : MonoBehaviour
+{
     private GameObject continueButton;
     private GameObject newGameButton;
     private GameObject levelsButton;
     private GameObject optionsButton;
-    private GameObject creditsButton;
     private GameObject exitButton;
     private GameObject backButton;
     private GameObject musicImage;
@@ -30,25 +28,22 @@ public class MenuControl : MonoBehaviour {
     private GameObject levelNotAllowed;
 
     private GameObject resumeButton;
-    private GameObject restartLevelButton;
     private GameObject mainMenuButton;
 
     public AudioMixer audioMixer;
-    
+
     public bool silenced;
     public float lastVolume;
 
     Resolution[] resolutions;
+    public bool delete;
 
     private void Awake()
     {
-        //DontDestroyOnLoad(this);
-        if(GameObject.Find("StartButton") != null) startButton = GameObject.Find("StartButton");
         if (GameObject.Find("ContinueButton") != null) continueButton = GameObject.Find("ContinueButton");
         if (GameObject.Find("NewGameButton") != null) newGameButton = GameObject.Find("NewGameButton");
         if (GameObject.Find("LevelsButton") != null) levelsButton = GameObject.Find("LevelsButton");
         if (GameObject.Find("OptionsButton") != null) optionsButton = GameObject.Find("OptionsButton");
-        if (GameObject.Find("CreditsButton") != null) creditsButton = GameObject.Find("CreditsButton");
         if (GameObject.Find("ExitButton") != null) exitButton = GameObject.Find("ExitButton");
         if (GameObject.Find("BackButton") != null) backButton = GameObject.Find("BackButton");
         if (GameObject.Find("musicImage") != null) musicImage = GameObject.Find("musicImage");
@@ -66,142 +61,88 @@ public class MenuControl : MonoBehaviour {
         if (GameObject.Find("LevelNotAllowed") != null) levelNotAllowed = GameObject.Find("LevelNotAllowed");
 
         if (GameObject.Find("ResumeButton") != null) resumeButton = GameObject.Find("ResumeButton");
-        if (GameObject.Find("RestartLevelButton") != null) restartLevelButton = GameObject.Find("RestartLevelButton");
         if (GameObject.Find("MainMenuButton") != null) mainMenuButton = GameObject.Find("MainMenuButton");
 
-        if (SceneManager.GetActiveScene().name == "Menus")
+        if (SceneManager.GetActiveScene().name == "Previous")
         {
-            startButton.SetActive(true);
-            continueButton.SetActive(false);
-            newGameButton.SetActive(false);
-            levelsButton.SetActive(false);
-            optionsButton.SetActive(false);
-            creditsButton.SetActive(false);
-            exitButton.SetActive(false);
-            backButton.SetActive(false);
-            musicImage.SetActive(false);
-            musicToggle.SetActive(false);
-            volumeImage.SetActive(false);
-            volumeSlider.SetActive(false);
-            fullscreenImage.SetActive(false);
-            fullscreenToggle.SetActive(false);
-            resolutionImage.SetActive(false);
-            resolutionDropdown.SetActive(false);
-            resetOptionsButton.SetActive(false);
-            level1Button.SetActive(false);
-            level2Button.SetActive(false);
-            level3Button.SetActive(false);
-            levelNotAllowed.SetActive(false);
-        }
-        else
-        {
-            resumeButton.SetActive(false);
-            restartLevelButton.SetActive(false);
-            optionsButton.SetActive(false);
-            mainMenuButton.SetActive(false);
-            backButton.SetActive(false);
-            musicImage.SetActive(false);
-            musicToggle.SetActive(false);
-            volumeImage.SetActive(false);
-            volumeSlider.SetActive(false);
-            fullscreenImage.SetActive(false);
-            fullscreenToggle.SetActive(false);
-            resolutionImage.SetActive(false);
-            resolutionDropdown.SetActive(false);
-            resetOptionsButton.SetActive(false);
+            delete = true;
+            StartCoroutine(ExecuteAfterTime(2.0f));
         }
     }
 
     // Use this for initialization
-    void Start () {
-        if(SceneManager.GetActiveScene().name != "Menus")
+    void Start()
+    {
+        if(SceneManager.GetActiveScene().name != "Previous")
         {
-            resumeButton.SetActive(false);
-            restartLevelButton.SetActive(false);
-            optionsButton.SetActive(false);
-            mainMenuButton.SetActive(false);
-            backButton.SetActive(false);
-            musicImage.SetActive(false);
-            musicToggle.SetActive(false);
-            volumeImage.SetActive(false);
-            volumeSlider.SetActive(false);
-            fullscreenImage.SetActive(false);
-            fullscreenToggle.SetActive(false);
-            resolutionImage.SetActive(false);
-            resolutionDropdown.SetActive(false);
-            resetOptionsButton.SetActive(false);
+            if (SceneManager.GetActiveScene().name != "Menus")
+            {
+                resumeButton.SetActive(false);
+                optionsButton.SetActive(false);
+                mainMenuButton.SetActive(false);
+                backButton.SetActive(false);
+                musicImage.SetActive(false);
+                musicToggle.SetActive(false);
+                volumeImage.SetActive(false);
+                volumeSlider.SetActive(false);
+                fullscreenImage.SetActive(false);
+                fullscreenToggle.SetActive(false);
+                resolutionImage.SetActive(false);
+                resolutionDropdown.SetActive(false);
+                resetOptionsButton.SetActive(false);
+            }
+            else
+            {
+                goMainMenu();
+            }
+            silenced = GameControl.control.music;
+            if (!silenced)
+            {
+                audioMixer.SetFloat("Volume", GameControl.control.volume);
+                musicToggle.GetComponent<Toggle>().isOn = true;
+            }
+            else
+            {
+                audioMixer.SetFloat("Volume", -80);
+                musicToggle.GetComponent<Toggle>().isOn = false;
+            }
+
+            lastVolume = GameControl.control.volume;
+            volumeSlider.GetComponent<Slider>().value = lastVolume;
+
+            if (GameControl.control.fullscreen) fullscreenToggle.GetComponent<Toggle>().isOn = true;
+            else fullscreenToggle.GetComponent<Toggle>().isOn = false;
+            Screen.fullScreen = fullscreenToggle.GetComponent<Toggle>().isOn;
+
+            resolutions = Screen.resolutions;
+
+            resolutionDropdown.GetComponent<Dropdown>().ClearOptions();
+
+            List<string> options = new List<string>();
+
+            int currentResolutionIndex = 0;
+
+            for (int i = 0; i < resolutions.Length; i++)
+            {
+                string option = resolutions[i].width + " x " + resolutions[i].height;
+                options.Add(option);
+
+                if (resolutions[i].width == GameControl.control.resolution[0] && resolutions[i].height == GameControl.control.resolution[1]) currentResolutionIndex = i;
+            }
+            changeResolution(currentResolutionIndex);
+            resolutionDropdown.GetComponent<Dropdown>().AddOptions(options);
+            resolutionDropdown.GetComponent<Dropdown>().value = currentResolutionIndex;
+            resolutionDropdown.GetComponent<Dropdown>().RefreshShownValue();
         }
-        else
-        {
-            startButton.SetActive(true);
-            continueButton.SetActive(false);
-            newGameButton.SetActive(false);
-            levelsButton.SetActive(false);
-            optionsButton.SetActive(false);
-            creditsButton.SetActive(false);
-            exitButton.SetActive(false);
-            backButton.SetActive(false);
-            musicImage.SetActive(false);
-            musicToggle.SetActive(false);
-            volumeImage.SetActive(false);
-            volumeSlider.SetActive(false);
-            fullscreenImage.SetActive(false);
-            fullscreenToggle.SetActive(false);
-            resolutionImage.SetActive(false);
-            resolutionDropdown.SetActive(false);
-            resetOptionsButton.SetActive(false);
-            level1Button.SetActive(false);
-            level2Button.SetActive(false);
-            level3Button.SetActive(false);
-            levelNotAllowed.SetActive(false);
-        }
-        silenced = GameControl.control.music;
-        if (!silenced)
-        {
-            audioMixer.SetFloat("Volume", GameControl.control.volume);
-            musicToggle.GetComponent<Toggle>().isOn = true;
-        }
-        else
-        {
-            audioMixer.SetFloat("Volume", -80);
-            musicToggle.GetComponent<Toggle>().isOn = false;
-        }
-
-        lastVolume = GameControl.control.volume;
-        volumeSlider.GetComponent<Slider>().value = lastVolume;
-
-        if(GameControl.control.fullscreen) fullscreenToggle.GetComponent<Toggle>().isOn = true;
-        else fullscreenToggle.GetComponent<Toggle>().isOn = false;
-        Screen.fullScreen = fullscreenToggle.GetComponent<Toggle>().isOn;
-
-        resolutions = Screen.resolutions;
-
-        resolutionDropdown.GetComponent<Dropdown>().ClearOptions();
-
-        List<string> options = new List<string>();
-
-        int currentResolutionIndex = 0;
-
-        for (int i = 0; i < resolutions.Length; i++)
-        {
-            string option = resolutions[i].width + " x " + resolutions[i].height;
-            options.Add(option);
-
-            if (resolutions[i].width == GameControl.control.resolution[0] && resolutions[i].height == GameControl.control.resolution[1]) currentResolutionIndex = i;
-        }
-        changeResolution(currentResolutionIndex);
-        resolutionDropdown.GetComponent<Dropdown>().AddOptions(options);
-        resolutionDropdown.GetComponent<Dropdown>().value = currentResolutionIndex;
-        resolutionDropdown.GetComponent<Dropdown>().RefreshShownValue();
     }
-	
-	// Update is called once per frame
-	void Update () {
-	}
+
+    // Update is called once per frame
+    void Update()
+    {
+    }
 
     public void goMainMenu()
     {
-        startButton.SetActive(false);
         continueButton.SetActive(true);
         if (!GameControl.control.continueAvailable)
         {
@@ -216,7 +157,6 @@ public class MenuControl : MonoBehaviour {
         newGameButton.SetActive(true);
         levelsButton.SetActive(true);
         optionsButton.SetActive(true);
-        creditsButton.SetActive(true);
         exitButton.SetActive(true);
         backButton.SetActive(false);
         musicImage.SetActive(false);
@@ -236,12 +176,10 @@ public class MenuControl : MonoBehaviour {
 
     public void goOptionsMenu()
     {
-        startButton.SetActive(false);
         continueButton.SetActive(false);
         newGameButton.SetActive(false);
         levelsButton.SetActive(false);
         optionsButton.SetActive(false);
-        creditsButton.SetActive(false);
         exitButton.SetActive(false);
         backButton.SetActive(true);
         musicImage.SetActive(true);
@@ -261,12 +199,10 @@ public class MenuControl : MonoBehaviour {
 
     public void goLevelsMenu()
     {
-        startButton.SetActive(false);
         continueButton.SetActive(false);
         newGameButton.SetActive(false);
         levelsButton.SetActive(false);
         optionsButton.SetActive(false);
-        creditsButton.SetActive(false);
         exitButton.SetActive(false);
         backButton.SetActive(true);
         musicImage.SetActive(false);
@@ -282,6 +218,11 @@ public class MenuControl : MonoBehaviour {
         level2Button.SetActive(true);
         level3Button.SetActive(true);
         levelNotAllowed.SetActive(false);
+    }
+
+    public void Fade(int level)
+    {
+        GameObject.Find("LevelChanger").GetComponent<levelChanger>().fadeToLevel(level);
     }
 
     public void newGame()
@@ -303,13 +244,13 @@ public class MenuControl : MonoBehaviour {
         {
             case 0:
                 GameControl.control.lastLevelPlayed = 1;
-                loadLevel(numLevel);
+                Fade(numLevel);
                 break;
             case 1:
                 if (GameControl.control.levels[numLevel])
                 {
                     GameControl.control.lastLevelPlayed = 2;
-                    loadLevel(numLevel);
+                    Fade(numLevel);
                 }
                 else
                 {
@@ -321,7 +262,7 @@ public class MenuControl : MonoBehaviour {
                 if (GameControl.control.levels[numLevel])
                 {
                     GameControl.control.lastLevelPlayed = 3;
-                    loadLevel(numLevel);
+                    Fade(numLevel);
                 }
                 else
                 {
@@ -337,7 +278,6 @@ public class MenuControl : MonoBehaviour {
     public void resumeGame()
     {
         resumeButton.SetActive(false);
-        restartLevelButton.SetActive(false);
         optionsButton.SetActive(false);
         mainMenuButton.SetActive(false);
         backButton.SetActive(false);
@@ -355,12 +295,13 @@ public class MenuControl : MonoBehaviour {
         Cursor.visible = false;
         Time.timeScale = 1.0f;
         GameControl.control.gamePaused = false;
+        GameControl.control.gameMusic.Play();
+        GameControl.control.planeSound.Play();
     }
 
     public void goPauseMenu()
     {
         resumeButton.SetActive(true);
-        restartLevelButton.SetActive(true);
         optionsButton.SetActive(true);
         mainMenuButton.SetActive(true);
         backButton.SetActive(false);
@@ -378,7 +319,6 @@ public class MenuControl : MonoBehaviour {
     public void goOptionsFromPause()
     {
         resumeButton.SetActive(false);
-        restartLevelButton.SetActive(false);
         optionsButton.SetActive(false);
         mainMenuButton.SetActive(false);
         backButton.SetActive(true);
@@ -398,7 +338,7 @@ public class MenuControl : MonoBehaviour {
         //GameControl.control.firstCheck = true;
         GameControl.control.lastLevelPlayed = GameControl.control.level;
         GameControl.control.saveData();
-        SceneManager.LoadScene("Menus");
+        Fade(3);
     }
 
     public void ExitGameBtn()
@@ -408,33 +348,40 @@ public class MenuControl : MonoBehaviour {
 
     public void loadLevel(int levelNum)
     {
-        if (GameControl.control.levels[levelNum])
+        if (levelNum == 3)
         {
-            switch(levelNum)
-            {
-                case 0:
-                    SceneManager.LoadScene("Level1");
-                    break;
-                case 1:
-                    SceneManager.LoadScene("Level2");
-                    break;
-                case 2:
-                    SceneManager.LoadScene("Level3");
-                    break;
-                default:
-                    break;
-            }
+            SceneManager.LoadScene("Menus");
         }
         else
         {
-            levelNotAllowed.SetActive(true);
-            StartCoroutine(LevelNotAllowed(2));
+            if (GameControl.control.levels[levelNum])
+            {
+                switch (levelNum)
+                {
+                    case 0:
+                        SceneManager.LoadScene("Level1");
+                        break;
+                    case 1:
+                        SceneManager.LoadScene("Level2");
+                        break;
+                    case 2:
+                        SceneManager.LoadScene("Level3");
+                        break;
+                    default:
+                        break;
+                }
+            }
+            else
+            {
+                levelNotAllowed.SetActive(true);
+                StartCoroutine(LevelNotAllowed(2));
+            }
         }
     }
 
     public void back()
     {
-        if(musicImage.activeSelf) GameControl.control.saveData();
+        if (musicImage.activeSelf) GameControl.control.saveData();
         goMainMenu();
     }
 
@@ -485,11 +432,17 @@ public class MenuControl : MonoBehaviour {
         audioMixer.SetFloat("Volume", -10);
         GameControl.control.volume = -10;
         fullscreenToggle.GetComponent<Toggle>().isOn = true;
-        Screen.fullScreen = true;
-        GameControl.control.fullscreen = true;
+        activateFullscreen(true);
         resolutionDropdown.GetComponent<Dropdown>().value = resolutions.Length;
         Screen.SetResolution(1920, 1080, Screen.fullScreen);
         GameControl.control.resolution[0] = 1920;
         GameControl.control.resolution[1] = 1080;
+    }
+
+    public IEnumerator ExecuteAfterTime(float time)
+    {
+        yield return new WaitForSeconds(time);
+
+        GameObject.Find("Fade").GetComponent<FadeStart>().FadeIn();
     }
 }

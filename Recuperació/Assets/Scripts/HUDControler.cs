@@ -125,7 +125,6 @@ public class HUDControler : MonoBehaviour {
     public void ShowMovementControls()
     {
         gameObject.transform.GetChild(0).gameObject.SetActive(true);
-        StartCoroutine(HideAfterTime(5.0f));
     }
 
     public void HideMovementControls()
@@ -137,7 +136,6 @@ public class HUDControler : MonoBehaviour {
     public void ShowBoostControl()
     {
         gameObject.transform.GetChild(1).gameObject.SetActive(true);
-        StartCoroutine(HideAfterTime(5.0f));
     }
 
     public void HideBoostControl()
@@ -149,7 +147,6 @@ public class HUDControler : MonoBehaviour {
     public void ShowTricksControls()
     {
         gameObject.transform.GetChild(2).gameObject.SetActive(true);
-        StartCoroutine(HideAfterTime(5.0f));
     }
 
     public void HideTricksControls()
@@ -184,6 +181,32 @@ public class HUDControler : MonoBehaviour {
         }
     }
 
+    public void printRaceResults2()
+    {
+        results.SetActive(true);
+
+        if (GameControl.control.playerScore > GameControl.control.alexScore)
+        {
+            results.transform.GetChild(0).GetComponent<TextMeshProUGUI>().fontSize = 30;
+            results.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "1. Robert        5 points\n\n2. Emily          3 points\n\n3. William       2 points\n\n4. Alex            1 point";
+        }
+        else if (GameControl.control.playerScore > GameControl.control.emilyScore)
+        {
+            results.transform.GetChild(0).GetComponent<TextMeshProUGUI>().fontSize = 30;
+            results.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "1. Emily          5 points\n\n2. Robert        3 points\n\n3. William       2 points\n\n4. Alex            1 point";
+        }
+        else if (GameControl.control.playerScore > GameControl.control.williamScore)
+        {
+            results.transform.GetChild(0).GetComponent<TextMeshProUGUI>().fontSize = 30;
+            results.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "1. Emily          5 points\n\n2. William       3 points\n\n3. Robert        2 points\n\n4. Alex            1 point";
+        }
+        else
+        {
+            results.transform.GetChild(0).GetComponent<TextMeshProUGUI>().fontSize = 30;
+            results.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "1. Emily          5 points\n\n2. William       3 points\n\n3. Alex            2 points\n\n4. Robert        1 point";
+        }
+    }
+
     public void HideResults()
     {
         results.SetActive(false);
@@ -193,17 +216,17 @@ public class HUDControler : MonoBehaviour {
     {
         results.SetActive(true);
 
-        if (GameControl.control.playerGlobal > GameControl.control.emilyGlobal)
+        if (GameControl.control.playerGlobal >= GameControl.control.emilyGlobal)
         {
             results.transform.GetChild(0).GetComponent<TextMeshProUGUI>().fontSize = 30;
             results.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "1. Robert        " + GameControl.control.playerGlobal + " points\n\n2. Emily          " + GameControl.control.emilyGlobal + " points\n\n3. Alex            " + GameControl.control.alexGlobal + " points\n\n4. William       " + GameControl.control.williamGlobal + " points";
         }
-        else if (GameControl.control.playerGlobal > GameControl.control.alexGlobal)
+        else if (GameControl.control.playerGlobal >= GameControl.control.alexGlobal)
         {
             results.transform.GetChild(0).GetComponent<TextMeshProUGUI>().fontSize = 30;
             results.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "1. Emily          " + GameControl.control.emilyGlobal + " points\n\n2. Robert        " + GameControl.control.playerGlobal + " points\n\n3. Alex            " + GameControl.control.alexGlobal + " points\n\n4. William       " + GameControl.control.williamGlobal + " points";
         }
-        else if (GameControl.control.playerGlobal > GameControl.control.williamGlobal)
+        else if (GameControl.control.playerGlobal >= GameControl.control.williamGlobal)
         {
             results.transform.GetChild(0).GetComponent<TextMeshProUGUI>().fontSize = 30;
             results.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "1. Emily          " + GameControl.control.emilyGlobal + " points\n\n2. Alex            " + GameControl.control.alexGlobal + " points\n\n3. Robert        " + GameControl.control.playerGlobal + " points\n\n4. William       " + GameControl.control.williamGlobal + " points";
@@ -213,14 +236,5 @@ public class HUDControler : MonoBehaviour {
             results.transform.GetChild(0).GetComponent<TextMeshProUGUI>().fontSize = 30;
             results.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "1. Emily          " + GameControl.control.emilyGlobal + " points\n\n2. Alex            " + GameControl.control.alexGlobal + " points\n\n3. William       " + GameControl.control.williamGlobal + " points\n\n4. Robert        " + GameControl.control.playerGlobal + " points";
         }
-    }
-
-    public IEnumerator HideAfterTime(float time)
-    {
-        yield return new WaitForSeconds(time);
-
-        if (movementControl) HideMovementControls();
-        if (boostControl) HideBoostControl();
-        if (tricksControl) HideTricksControls();
     }
 }
